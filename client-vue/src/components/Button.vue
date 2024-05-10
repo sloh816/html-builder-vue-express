@@ -1,19 +1,19 @@
 <script setup>
 const props = defineProps(["href", "type", "class"]);
+const classname = "button " + props.class;
 </script>
 
 <template>
-	<button v-if="!href" :class="class" :type="type"><slot /></button>
-	<a v-if="href" :href="href" :class="class"><slot /></a>
+	<button v-if="!href" :class="classname" :type="type"><slot /></button>
+	<a v-if="href" :href="href" :class="classname"><slot /></a>
 </template>
 
-<style scoped lang="scss">
-button,
-a {
+<style lang="scss">
+.button {
 	background: var(--orange);
 	font-weight: bold;
 	font-size: 1.1rem;
-	padding: 0.6rem 1.2rem;
+	padding: 0.5rem 1.2rem;
 	border-radius: 0.6rem;
 	transition: 0.3s;
 	border: none;

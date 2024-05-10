@@ -9,6 +9,27 @@ export async function getProcesses() {
 		console.error("Error getting processes:", error);
 	}
 }
+
+export async function getThemes(templateName) {
+	try {
+		const response = await axios.get(`/api/themes`);
+		if (templateName) {
+			return response.data.filter((theme) => theme.template === templateName);
+		}
+		return response.data;
+	} catch (error) {
+		console.error("Error getting themes:", error);
+	}
+}
+
+export async function getTheme(themeSlug) {
+	try {
+		const response = await axios.get(`/api/theme/${themeSlug}`);
+		return response.data;
+	} catch (error) {
+		console.error("Error getting theme:", error);
+	}
+}
 // #endregion
 
 // #region POST data to server

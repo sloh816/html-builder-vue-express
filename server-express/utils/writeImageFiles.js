@@ -15,7 +15,7 @@ function writeImageFile({ base64Data, filename }) {
 async function writeImageFiles($, outputFolderPath, outputImageKey = "") {
 	fs.mkdir(outputFolderPath, { recursive: true }, function (err) {});
 
-	console.log("► Writing image files...");
+	console.log("🔃 Writing image files...");
 
 	$("img").each(async (index, img) => {
 		var imgSrc = $(img).attr("src");
@@ -45,7 +45,7 @@ async function writeImageFiles($, outputFolderPath, outputImageKey = "") {
 		writeImageFile({ base64Data, filename });
 	});
 
-	console.log("Files written successfully:", outputFolderPath);
+	console.log("✅ Files written successfully:", outputFolderPath);
 	return $.html();
 }
 

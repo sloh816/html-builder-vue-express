@@ -5,7 +5,7 @@ const mammoth = require("mammoth");
 const cheerio = require("cheerio");
 
 async function cleanUpHtml(htmlFile) {
-	console.log("Cleaning up HTML");
+	console.log("🔃 Cleaning up HTML...");
 	let html = await readFile(htmlFile, "html");
 	let $ = cheerio.load(html);
 

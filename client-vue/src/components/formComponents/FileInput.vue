@@ -5,7 +5,7 @@ const props = defineProps(["label", "name"]);
 <template>
 	<div class="input">
 		<label :for="`${name}`" class="label">{{ label }}</label>
-		<input type="file" :ref="`${name}`" @change="emitFile" />
+		<input type="file" :ref="`${name}`" :name="name" @change="emitFile" />
 	</div>
 </template>
 
@@ -28,7 +28,6 @@ input[type="file"] {
 	border-radius: 1rem;
 	border: 2px dashed var(--slate-400);
 	color: var(--slate-600);
-	font-weight: bold;
 	transition: 0.3s;
 
 	&:hover {

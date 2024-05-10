@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import ProcessView from "../views/ProcessView.vue";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,8 +18,19 @@ const router = createRouter({
 			component: () => import("../views/PublicationsView.vue")
 		},
 		{
+			path: "/themes",
+			name: "themes",
+			component: () => import("../views/ThemesView.vue")
+		},
+		{
+			path: "/edit-theme/:template/:themeSlug",
+			name: "editTheme",
+			component: () => import("../views/EditThemeView.vue"),
+			props: true
+		},
+		{
 			path: "/process/:processSlug",
-			name: "ProcessView",
+			name: "process",
 			component: () => import("../views/ProcessView.vue"),
 			props: true
 		}

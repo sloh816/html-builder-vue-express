@@ -11,6 +11,7 @@ import { RouterLink } from "vue-router";
 		<nav>
 			<RouterLink to="/">Home</RouterLink>
 			<RouterLink to="/publications">Publications</RouterLink>
+			<RouterLink to="/themes">Themes</RouterLink>
 		</nav>
 	</header>
 </template>
@@ -23,7 +24,7 @@ header {
 	padding: 1.6rem 2rem;
 	background-color: white;
 	box-shadow: 0 0 0.6rem rgba(0, 0, 0, 0.1);
-	margin-bottom: 4rem;
+	margin-bottom: 5rem;
 
 	.title {
 		display: flex;
