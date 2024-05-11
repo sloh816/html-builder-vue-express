@@ -1,0 +1,17 @@
+@import "./base.css";
+
+:root {
+	--slate-200: #e2e8f0;
+	--slate-800: #1e293b;
+	--light-orange: #fed7aa;
+}
+
+body {
+	background: var(--slate-200);
+	color: var(--slate-800);
+	font-family: "proxima-nova", sans-serif;
+
+	h1.page-title {
+		text-align: center;
+	}
+}

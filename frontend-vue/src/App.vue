@@ -1,0 +1,20 @@
+<script setup>
+import { RouterView } from "vue-router";
+import Header from "./components/Header.vue";
+</script>
+
+<template>
+	<Header />
+	<main><RouterView /></main>
+</template>
+
+<style scoped>
+main {
+	max-width: 1200px;
+	margin: 0 auto;
+
+	@media screen and (max-width: 1200px) {
+		margin: 0 20px;
+	}
+}
+</style>
