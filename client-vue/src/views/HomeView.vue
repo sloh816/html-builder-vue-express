@@ -1,5 +1,5 @@
 <template>
-	<h1 class="page-title">Processes</h1>
+	<h1 class="page-title">What would you like to do?</h1>
 	<ul>
 		<div></div>
 		<li v-for="process in processes">

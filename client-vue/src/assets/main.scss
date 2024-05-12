@@ -18,6 +18,11 @@ body {
 		text-align: center;
 		margin-bottom: 4rem;
 	}
+
+	a,
+	a:visited {
+		color: inherit;
+	}
 }
 
 form {
