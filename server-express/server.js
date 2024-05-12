@@ -4,10 +4,10 @@ const cors = require("cors");
 const multer = require("multer");
 
 const fs = require("fs").promises;
-const path = require("path");
 
 const { slugify } = require("./utils/utils.js");
 const { runProcess } = require("./processes/runProcess");
+const { getSubfolders } = require("./utils/filesAndFolders.js");
 
 const app = express();
 app.use(cors());
@@ -15,8 +15,7 @@ app.use(cors());
 // Define a route to serve the list of subfolders within the 'processes' folder
 app.get("/api/processes", async (req, res) => {
 	try {
-		const processesFolder = "./processes"; // Path to the 'processes' folder
-		const processFolders = await fs.readdir(processesFolder);
+		const processFolders = await getSubfolders("./processes");
 		const processes = processFolders.map((process) => {
 			return {
 				name: process,
