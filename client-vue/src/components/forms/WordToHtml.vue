@@ -1,40 +1,39 @@
 <template>
-	<form @submit.prevent="submitForm" enctype="multipart/form-data">
-		<label>Upload a Word document: <input type="file" @change="handleFileChange" ref="wordFile" /></label>
+	<form enctype="multipart/form-data" @submit.prevent="sendForm">
+		<label for="wordFile" class="label">Upload a Word document:</label>
+		<input type="file" ref="wordFile" @change="handleFile" />
 		<button>Submit</button>
 	</form>
+	<p>{{ message }}</p>
 </template>
 
 <script>
-import axios from "axios";
+import { sendWordToHTmlForm } from "@/server";
 
 export default {
+	name: "wordToHtml",
+
 	data() {
 		return {
-			formData: {
-				wordFile: null,
-				template: "word-to-html"
-			}
+			wordFile: "",
+			message: ""
 		};
 	},
 
 	methods: {
-		async submitForm() {
-			const formData = new FormData();
-			formData.append("wordFile", this.formData.wordFile);
-			formData.append("template", this.formData.template);
-
-			const response = await axios.post("http://localhost:3000/api/word-to-html", formData, {
-				headers: {
-					"Content-Type": "multipart/form-data"
-				}
-			});
-
-			console.log(response.data);
+		handleFile() {
+			// store the upload word file to the wordFile variable.
+			this.wordFile = this.$refs.wordFile.files[0];
 		},
 
-		handleFileChange(event) {
-			this.formData.wordFile = event.target.files[0];
+		async sendForm() {
+			if (this.wordFile) {
+				const formData = new FormData();
+				formData.append("wordFile", this.wordFile);
+				this.message = await sendWordToHTmlForm(formData);
+			} else {
+				this.message = "Please upload a file";
+			}
 		}
 	}
 };

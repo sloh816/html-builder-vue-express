@@ -10,7 +10,7 @@ import InDesignToHtml from "@/components/forms/InDesignToHtml.vue";
 </template>
 
 <script>
-import getProcesses from "@/server";
+import { getProcesses } from "@/server";
 
 export default {
 	name: "Process",

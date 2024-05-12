@@ -1,13 +1,16 @@
 // server.js
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require("body-parser");
-const fs = require("fs").promises; // For asynchronous file system operations
-const { slugify } = require("./utils/utils");
+const multer = require("multer");
+
+const fs = require("fs").promises;
+const path = require("path");
+
+const { slugify } = require("./utils/utils.js");
+const { runProcess } = require("./processes/runProcess");
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
 
 // Define a route to serve the list of subfolders within the 'processes' folder
 app.get("/api/processes", async (req, res) => {
@@ -27,15 +30,29 @@ app.get("/api/processes", async (req, res) => {
 	}
 });
 
-// Create multer middleware instance
+// multer middleware
+const upload = multer({
+	dest: "./temp/"
+});
 
-app.post("/api/word-to-html", (req, res) => {
-	const formData = req.body;
-	console.log("Form data received: ", formData);
-	res.send("Form submitted successfully");
+// Define a route to retrieve word file from the client
+app.post("/api/word-to-html", upload.single("wordFile"), async (req, res) => {
+	// add .docx extension to the file path
+	fs.rename(req.file.path, req.file.path + ".docx");
+
+	// execute 'Word to HTML' main function:
+	runProcess({
+		processFolderName: "Word to HTML",
+		tempWordFilePath: req.file.path + ".docx",
+		publicationName: req.file.originalname.replace(".docx", "")
+	});
+
+	// return a response
+	res.json({ file: req.file, body: req.body });
 });
 
 // Start the server
+// createPublicationsFolder();
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}`);

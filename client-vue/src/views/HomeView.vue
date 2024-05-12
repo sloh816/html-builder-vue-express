@@ -10,7 +10,7 @@
 
 <script>
 import { RouterLink } from "vue-router";
-import getProcesses from "@/server";
+import { getProcesses } from "@/server";
 
 export default {
 	data() {
