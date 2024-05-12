@@ -12,6 +12,7 @@ import Header from "./components/Header.vue";
 main {
 	max-width: 1200px;
 	margin: 0 auto;
+	padding-bottom: 4rem;
 
 	@media screen and (max-width: 1200px) {
 		margin: 0 20px;
