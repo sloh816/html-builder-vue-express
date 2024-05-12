@@ -65,7 +65,7 @@ async function convertWordToHTml(wordFilePath, outputFolderPath, imageKey) {
 
 	// write html file
 	const outputHtmlFile = await writeFile(outputFolderPath + "/index.html", html);
-	await cleanUpHtml(outputHtmlFile);
+	cleanUpHtml(outputHtmlFile);
 }
 
 async function main(tempWordFilePath, publicationName) {
