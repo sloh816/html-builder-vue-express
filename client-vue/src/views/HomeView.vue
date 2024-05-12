@@ -1,10 +1,7 @@
-<script setup>
-import { RouterLink } from "vue-router";
-</script>
-
 <template>
 	<h1 class="page-title">Processes</h1>
 	<ul>
+		<div></div>
 		<li v-for="process in processes">
 			<RouterLink :to="`/process/${process.slug}`">{{ process.name }}</RouterLink>
 		</li>
@@ -12,7 +9,8 @@ import { RouterLink } from "vue-router";
 </template>
 
 <script>
-import getProcess from "@/server";
+import { RouterLink } from "vue-router";
+import getProcesses from "@/server";
 
 export default {
 	data() {
@@ -22,7 +20,7 @@ export default {
 	},
 
 	async created() {
-		this.processes = await getProcess();
+		this.processes = await getProcesses();
 	}
 };
 </script>

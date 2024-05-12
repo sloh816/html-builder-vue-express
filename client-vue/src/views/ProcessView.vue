@@ -5,12 +5,12 @@ import InDesignToHtml from "@/components/forms/InDesignToHtml.vue";
 
 <template>
 	<h1 class="page-title">{{ process.name }}</h1>
-	<WordToHtml v-if="process.slug === 'word-to-html'" />
-	<InDesignToHtml v-if="process.slug === 'indesign-to-html'" />
+	<WordToHtml v-if="processSlug === 'word-to-html'" />
+	<InDesignToHtml v-if="processSlug === 'indesign-to-html'" />
 </template>
 
 <script>
-import getProcess from "@/server";
+import getProcesses from "@/server";
 
 export default {
 	name: "Process",
@@ -24,7 +24,7 @@ export default {
 	},
 
 	async created() {
-		this.allProcesses = await getProcess();
+		this.allProcesses = await getProcesses();
 		this.process = this.getProcess();
 	},
 
