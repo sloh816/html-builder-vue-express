@@ -61,6 +61,31 @@ async function readFile(filePath, fileType) {
 	}
 }
 
+async function getSubfolders(folderPath) {
+	console.log("► Getting subfolders...");
+	const fullFolderPath = path.resolve(folderPath);
+	try {
+		// Read the contents of the folder
+		const files = await fs.readdir(fullFolderPath);
+
+		// Filter out subfolders
+		const subfolders = await Promise.all(
+			files.map(async (file) => {
+				const filePath = path.join(fullFolderPath, file);
+				const stat = await fs.stat(filePath);
+				if (stat.isDirectory()) {
+					return file;
+				}
+			})
+		);
+
+		// Filter out undefined values (non-folders)
+		return subfolders.filter(Boolean);
+	} catch (err) {
+		throw new Error(`Error getting subfolders: ${err}`);
+	}
+}
+
 function createPublicationsFolder() {
 	const publicationFolder = path.resolve("publications");
 
@@ -79,5 +104,6 @@ module.exports = {
 	writeFile,
 	deleteFile,
 	readFile,
-	createPublicationsFolder
+	createPublicationsFolder,
+	getSubfolders
 };
