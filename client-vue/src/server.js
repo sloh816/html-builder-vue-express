@@ -44,4 +44,15 @@ export async function sendWordToHTmlForm(formData) {
         return "something went wrong";
     }
 }
+
+export async function sendEditThemeForm(formData) {
+    try {
+        await axios.post("/api/edit-theme", formData);
+        console.log(formData.entries());
+        return "Theme has been edited";
+    } catch (err) {
+        console.error(err);
+        return "something went wrong";
+    }
+}
 // #endregion

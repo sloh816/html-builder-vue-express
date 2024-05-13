@@ -34,14 +34,7 @@ export default {
         async sendForm(submitEvent) {
             if (this.wordFile) {
                 const formData = new FormData();
-
                 formData.append("wordFile", this.wordFile);
-
-                const stylemapInputs = submitEvent.target.querySelectorAll("[name^='sm-']");
-                for (const input of stylemapInputs) {
-                    formData.append(input.name, input.value);
-                }
-
                 this.message = await sendWordToHTmlForm(formData);
             } else {
                 this.message = "Please upload a file";

@@ -73,5 +73,9 @@ export default {
         border-radius: 0.6rem;
         font-size: 1.05rem;
     }
+
+    .label {
+        color: var(--slate-600);
+    }
 }
 </style>

@@ -47,7 +47,6 @@ app.get("/api/themes", async (req, res) => {
                 console.error("🔴 Error reading theme data:", err);
             }
         }
-        console.log(themesData);
         res.json(themesData);
     } catch (err) {
         console.error("🔴 Error fetching themes:", err);
@@ -69,6 +68,11 @@ app.post("/api/word-to-html", upload.single("wordFile"), async (req, res) => {
 
     // return a response
     res.json({ file: req.file, body: req.body });
+});
+
+app.post("/api/edit-theme", (req, res) => {
+    console.log({ body: req.body });
+    res.json({ body: req.body });
 });
 
 // Start the server
