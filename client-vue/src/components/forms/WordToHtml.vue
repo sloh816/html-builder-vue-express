@@ -5,70 +5,48 @@ import StyleMapInput from "@/components/formComponents/StyleMapInput.vue";
 </script>
 
 <template>
-	<form enctype="multipart/form-data" @submit.prevent="sendForm">
-		<p v-if="message" class="error-message">{{ message }}</p>
-		<FileInput label="Upload a Word Document:" name="wordFile" @onFileUpload="handleFileUpload" />
-		<div class="style-map">
-			<h2>Map Word styles to class names:</h2>
-			<StyleMapInput showLabels="true" @addButton="addStyleInput" index="0" />
-
-			<div v-for="n in styleInputCount" :key="n">
-				<StyleMapInput @addButton="addStyleInput" :index="n" />
-			</div>
-		</div>
-		<Button class="primary" type="submit">Submit</Button>
-	</form>
+    <form enctype="multipart/form-data" @submit.prevent="sendForm">
+        <p v-if="message" class="error-message">{{ message }}</p>
+        <FileInput label="Upload a Word Document:" name="wordFile" @onFileUpload="handleFileUpload" />
+        <Button class="primary" type="submit">Submit</Button>
+    </form>
 </template>
 
 <script>
 import { sendWordToHTmlForm } from "@/server";
 
 export default {
-	name: "wordToHtml",
+    name: "wordToHtml",
 
-	data() {
-		return {
-			wordFile: "",
-			message: "",
-			styleInputCount: 1,
-			stylemap: []
-		};
-	},
+    data() {
+        return {
+            wordFile: "",
+            message: "",
+        };
+    },
 
-	methods: {
-		addStyleInput() {
-			this.styleInputCount++;
-		},
+    methods: {
+        handleFileUpload(file) {
+            // store the upload word file to the wordFile variable.
+            this.wordFile = file;
+        },
 
-		handleFileUpload(file) {
-			// store the upload word file to the wordFile variable.
-			this.wordFile = file;
-		},
+        async sendForm(submitEvent) {
+            if (this.wordFile) {
+                const formData = new FormData();
 
-		async sendForm(submitEvent) {
-			if (this.wordFile) {
-				const formData = new FormData();
+                formData.append("wordFile", this.wordFile);
 
-				formData.append("wordFile", this.wordFile);
+                const stylemapInputs = submitEvent.target.querySelectorAll("[name^='sm-']");
+                for (const input of stylemapInputs) {
+                    formData.append(input.name, input.value);
+                }
 
-				const stylemapInputs = submitEvent.target.querySelectorAll("[name^='sm-']");
-				for (const input of stylemapInputs) {
-					formData.append(input.name, input.value);
-				}
-
-				this.message = await sendWordToHTmlForm(formData);
-			} else {
-				this.message = "Please upload a file";
-			}
-		}
-	}
+                this.message = await sendWordToHTmlForm(formData);
+            } else {
+                this.message = "Please upload a file";
+            }
+        },
+    },
 };
 </script>
-
-<style scoped lang="scss">
-.style-map {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-}
-</style>

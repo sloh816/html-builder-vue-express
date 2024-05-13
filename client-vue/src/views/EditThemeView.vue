@@ -1,27 +1,84 @@
+<script setup>
+import StyleMapInput from "@/components/formComponents/StyleMapInput.vue";
+import Button from "@/components/Button.vue";
+</script>
+
 <template>
-	<h1>Hello world</h1>
+    <h1 class="page-title">{{ themeData.themeName }}</h1>
+    <form>
+        <div class="style-map">
+            <h2>Map Word styles to class names:</h2>
+            <StyleMapInput v-if="styleMap.length === 0" showLabels="true" @addButton="addStyleInput" index="0" />
+            <StyleMapInput v-else showLabels="true" @addButton="addStyleInput" :styletype="getStyleType(styleMap[0])" :wordstyle="getWordStyle(styleMap[0])" :tag="getTag(styleMap[0])" :class="getClass(styleMap[0])" />
+
+            <div v-if="styleMap.length > 1" v-for="n in styleMap.length - 1" :key="n">
+                <StyleMapInput @addButton="addStyleInput" :index="n" :styletype="getStyleType(styleMap[n])" :wordstyle="getWordStyle(styleMap[n])" :tag="getTag(styleMap[n])" :class="getClass(styleMap[n])" />
+            </div>
+
+            <div v-for="n in styleInputCount">
+                <StyleMapInput @addButton="addStyleInput" :index="n + styleMap.length - 1" />
+            </div>
+        </div>
+        <Button type="submit">Update theme</Button>
+    </form>
 </template>
 
 <script>
-import { getThemes, getTheme } from "@/server";
+import { getThemeData } from "@/server";
 
 export default {
-	name: "editTheme",
-	props: ["template", "themeSlug"],
+    name: "editTheme",
+    props: ["template", "themeSlug"],
 
-	data() {
-		return {
-			themeName: "",
-			themeData: {}
-		};
-	},
+    data() {
+        return {
+            themeData: {},
+            styleMap: [],
+            styleInputCount: 1,
+        };
+    },
 
-	async created() {
-		// this.theme = await getTheme(`${this.template}_${th}`);
-		const themes = await getThemes();
-		this.themeName = themes.find((theme) => theme.slug === this.themeSlug).name;
-		this.themeData = await getTheme(`${this.template}_${this.themeName}`);
-		console.log(this.themeData);
-	}
+    async created() {
+        this.themeData = await getThemeData(this.themeSlug);
+        this.styleMap = this.themeData.styleMap;
+    },
+
+    methods: {
+        addStyleInput() {
+            this.styleInputCount++;
+        },
+
+        getStyleType(styleMapItem) {
+            const regex = /^([a-z0-9]+)\[/i;
+            const match = styleMapItem.match(regex);
+            return match ? match[1] : null;
+        },
+
+        getWordStyle(styleMapItem) {
+            const regex = /'([^']+)'/;
+            const match = styleMapItem.match(regex);
+            return match ? match[1] : null;
+        },
+
+        getTag(styleMapItem) {
+            const regex = /=>\s*([a-z0-9]+)/i;
+            const match = styleMapItem.match(regex);
+            return match ? match[1] : null;
+        },
+
+        getClass(styleMapItem) {
+            const regex = /\.([a-z0-9-]+)/i;
+            const match = styleMapItem.match(regex);
+            return match ? match[1] : null;
+        },
+    },
 };
 </script>
+
+<style scoped lang="scss">
+.style-map {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+</style>

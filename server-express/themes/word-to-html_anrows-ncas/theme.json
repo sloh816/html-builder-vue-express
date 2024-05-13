@@ -1,12 +1,6 @@
 {
-    "styleMap": [
-        "p[style-name='Cover title'] => h1.cover-title:fresh",
-        "p[style-name='Cover subtitle'] => p.cover-subtitle:fresh",
-        "p[style-name='Detail heading'] => p.detail-heading:fresh",
-        "p[style-name='Detail body'] => p.detail-body:fresh",
-        "p[style-name='Researcher heading'] => h2.researcher-heading:fresh",
-        "p[style-name='Researcher name'] => p.researcher-name:fresh",
-        "p[style-name='Researcher title'] => p.researcher-title:fresh",
-        "p[style-name='H2 Section title'] => h2.section-title:fresh"
-    ]
+    "themeName": "ANROWS NCAS",
+    "slug": "anrows-ncas",
+    "template": "word-to-html",
+    "styleMap": ["p[style-name='Cover title'] => h1.cover-title:fresh", "p[style-name='Cover subtitle'] => p.cover-subtitle:fresh", "p[style-name='Detail heading'] => p.detail-heading:fresh", "p[style-name='Detail body'] => p.detail-body:fresh", "p[style-name='Researcher heading'] => h2.researcher-heading:fresh", "p[style-name='Researcher name'] => p.researcher-name:fresh", "p[style-name='Researcher title'] => p.researcher-title:fresh", "p[style-name='H2 Section title'] => h2.section-title:fresh", "table[style-name='breakout box'] => table.breakout-box:fresh"]
 }
