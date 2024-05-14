@@ -1,58 +1,69 @@
 @import "./base.css";
 
 :root {
-    --slate-200: #e2e8f0;
-    --slate-400: #94a3b8;
-    --slate-600: #475569;
-    --slate-800: #1e293b;
-    --light-orange: #fed7aa;
-    --orange: #fb923c;
+	--slate-200: #e2e8f0;
+	--slate-400: #94a3b8;
+	--slate-600: #475569;
+	--slate-800: #1e293b;
+	--light-orange: #fed7aa;
+	--orange: #fb923c;
+	--light-green: #dcfce7;
+	--green: #22c55e;
 }
 
 body {
-    background: var(--slate-200);
-    color: var(--slate-800);
-    font-family: "proxima-nova", sans-serif;
+	background: var(--slate-200);
+	color: var(--slate-800);
+	font-family: "proxima-nova", sans-serif;
 
-    h1.page-title {
-        text-align: center;
-        margin-bottom: 3rem;
-    }
+	h1.page-title {
+		text-align: center;
+		margin-bottom: 3rem;
+	}
 
-    h2 {
-        margin-bottom: 1rem;
-    }
+	h2 {
+		margin-bottom: 1rem;
+	}
 
-    a,
-    a:visited {
-        color: inherit;
-    }
+	a,
+	a:visited {
+		color: inherit;
+	}
 
-    :focus-visible {
-        outline: 2px solid var(--orange);
-        outline-offset: 4px;
-    }
+	:focus-visible {
+		outline: 2px solid var(--orange);
+		outline-offset: 4px;
+	}
 }
 
 form {
-    background: white;
-    padding: 4rem;
-    border-radius: 1.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+	background: white;
+	padding: 4rem;
+	border-radius: 1.6rem;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
 
-    p.error-message {
-        background: var(--light-orange);
-        padding: 1rem 2rem;
-        border-radius: 0.6rem;
-        border-left: 4px solid var(--orange);
-    }
+	p.message {
+		background: var(--light-orange);
+		padding: 1rem 2rem;
+		border-radius: 0.6rem;
+		border-left: 4px solid var(--orange);
 
-    .label {
-        font-weight: bold;
-        display: block;
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-    }
+		&--success {
+			background: var(--light-green);
+			border-left: 4px solid var(--green);
+		}
+	}
+
+	.label {
+		font-weight: bold;
+		display: block;
+		font-size: 1.1rem;
+		margin-bottom: 0.5rem;
+	}
+
+	button[type="submit"] {
+		margin-top: 2rem;
+	}
 }

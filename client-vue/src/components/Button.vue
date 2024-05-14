@@ -12,7 +12,7 @@ const classname = "button " + props.class;
 .button {
 	background: var(--orange);
 	font-weight: bold;
-	font-size: 1.1rem;
+	font-size: 1rem;
 	padding: 0.5rem 1.2rem;
 	border-radius: 0.6rem;
 	transition: 0.3s;
@@ -27,8 +27,10 @@ const classname = "button " + props.class;
 		background: var(--slate-800);
 		border: 2px solid var(--slate-800);
 		color: white;
-		font-size: 1.05rem;
-		padding: 0.65rem 1.25rem;
+
+		&:visited:not(:hover) {
+			color: white;
+		}
 	}
 
 	&.tertiary {
@@ -40,6 +42,10 @@ const classname = "button " + props.class;
 		background: var(--slate-200);
 		border: 2px solid var(--slate-200);
 		color: var(--slate-800);
+	}
+
+	&.text-m {
+		font-size: 1.1rem;
 	}
 
 	&:visited {

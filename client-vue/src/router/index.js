@@ -18,6 +18,12 @@ const router = createRouter({
 			component: () => import("../views/PublicationsView.vue")
 		},
 		{
+			path: "/publication/:publicationFolder",
+			name: "publication",
+			component: () => import("../views/PublicationView.vue"),
+			props: true
+		},
+		{
 			path: "/themes",
 			name: "themes",
 			component: () => import("../views/ThemesView.vue")

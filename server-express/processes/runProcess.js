@@ -1,10 +1,10 @@
-function runProcess({ processFolderName, publicationName, tempWordFilePath }) {
+function runProcess({ processFolderName, document, tempWordFilePath, themeFolder }) {
 	console.log("Running process:", processFolderName);
 
 	const { main } = require(`./${processFolderName}/main`);
 
 	if (processFolderName === "Word to HTML") {
-		main(tempWordFilePath, publicationName);
+		main(tempWordFilePath, document, themeFolder);
 	}
 }
 

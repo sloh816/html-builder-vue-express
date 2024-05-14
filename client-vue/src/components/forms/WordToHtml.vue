@@ -1,45 +1,63 @@
 <script setup>
 import FileInput from "@/components/formComponents/FileInput.vue";
 import Button from "@/components/Button.vue";
-import StyleMapInput from "@/components/formComponents/StyleMapInput.vue";
+import SelectInput from "@/components/formComponents/SelectInput.vue";
 </script>
 
 <template>
-    <form enctype="multipart/form-data" @submit.prevent="sendForm">
-        <p v-if="message" class="error-message">{{ message }}</p>
-        <FileInput label="Upload a Word Document:" name="wordFile" @onFileUpload="handleFileUpload" />
-        <Button class="primary" type="submit">Submit</Button>
-    </form>
+	<form enctype="multipart/form-data" @submit.prevent="sendForm">
+		<p v-if="errorMessage" class="message">{{ errorMessage }}</p>
+		<FileInput label="Upload a Word Document:" name="wordFile" @onFileUpload="handleFileUpload" />
+		<SelectInput :options="themes" name="theme" />
+		<Button class="primary text-m" type="submit">Submit</Button>
+		<p v-if="message" class="message message--success">{{ message }}</p>
+	</form>
 </template>
 
 <script>
-import { sendWordToHTmlForm } from "@/server";
+import { sendWordToHTmlForm, getThemesData } from "@/server";
 
 export default {
-    name: "wordToHtml",
+	name: "wordToHtml",
 
-    data() {
-        return {
-            wordFile: "",
-            message: "",
-        };
-    },
+	data() {
+		return {
+			wordFile: "",
+			message: "",
+			errorMessage: "",
+			themes: []
+		};
+	},
 
-    methods: {
-        handleFileUpload(file) {
-            // store the upload word file to the wordFile variable.
-            this.wordFile = file;
-        },
+	async created() {
+		const themesData = await getThemesData("word-to-html");
+		themesData.forEach((theme) => {
+			this.themes.push({
+				name: theme.themeName,
+				value: theme.slug,
+				key: theme.slug
+			});
+		});
+	},
 
-        async sendForm(submitEvent) {
-            if (this.wordFile) {
-                const formData = new FormData();
-                formData.append("wordFile", this.wordFile);
-                this.message = await sendWordToHTmlForm(formData);
-            } else {
-                this.message = "Please upload a file";
-            }
-        },
-    },
+	methods: {
+		handleFileUpload(file) {
+			// store the upload word file to the wordFile variable.
+			this.wordFile = file;
+		},
+
+		async sendForm(event) {
+			if (this.wordFile) {
+				const formData = new FormData();
+				formData.append("wordFile", this.wordFile);
+				formData.append("theme", event.target.theme.value);
+
+				this.errorMessage = "";
+				this.message = await sendWordToHTmlForm(formData);
+			} else {
+				this.errorMessage = "Please upload a file";
+			}
+		}
+	}
 };
 </script>
