@@ -30,6 +30,7 @@ export default {
 
 	async created() {
 		this.publications = await getPublications();
+		this.publications = this.publications.reverse();
 	}
 };
 </script>

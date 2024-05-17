@@ -44,7 +44,7 @@ header {
 		a {
 			text-decoration: none;
 			font-weight: bold;
-			font-size: 1.2rem;
+			font-size: 1rem;
 			padding: 0.6rem 1.2rem;
 			border-radius: 0.6rem;
 			transition: 0.3s;

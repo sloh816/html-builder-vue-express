@@ -3,12 +3,13 @@ const { createFolder, copyFile, writeFile, deleteFile, readFile } = require("../
 const { writeImageFiles } = require("../../utils/writeImageFiles.js");
 const mammoth = require("mammoth");
 const cheerio = require("cheerio");
+const fs = require("fs").promises;
+const path = require("path");
 
-async function cleanUpHtml(htmlFile) {
+function cleanUpHtml(html) {
 	console.log("🔃 Cleaning up HTML...");
 
 	try {
-		let html = await readFile(htmlFile, "html");
 		let $ = cheerio.load(html);
 
 		// Select all <a> tags with an id that starts with '_'
@@ -50,33 +51,66 @@ async function cleanUpHtml(htmlFile) {
 			$(element).unwrap();
 		});
 
-		// overwrite html file
-		html = $.html();
-		await writeFile(htmlFile, html);
+		// convert table with class 'two-columns' to a two-column div layout
+		$("table.two-columns").each((index, element) => {
+			const table = $(element);
+
+			const column1Contents = table.find("td:nth-child(1)").html();
+			const column2Contents = table.find("td:nth-child(2)").html();
+
+			const twoColumnDiv = $(`<div class="two-columns">`);
+			twoColumnDiv.append(`<div class="column-1">${column1Contents}</div>`);
+			twoColumnDiv.append(`<div class="column-2">${column2Contents}</div>`);
+
+			table.replaceWith(twoColumnDiv);
+		});
+
+		console.log("✅ HTML cleaned up.");
+
+		// overwrite html
+		return $("body").html();
 	} catch (err) {
 		console.error("🔴 Error cleaning up HTML:", err);
 	}
 }
 
-async function convertWordToHTml(wordFilePath, outputFolderPath, imageKey, styleMap) {
-	console.log("converting word to html...");
+async function writeHtmlFile({ templatePath, content, title, outputFilePath }) {
+	const templateHtml = await fs.readFile(templatePath, "utf8");
+	const html = templateHtml.replace("{{ content }}", content).replace("{{ title }}", title);
+	await fs.writeFile(outputFilePath, html, "utf-8");
+}
 
-	try {
-		const mammothObject = await mammoth.convertToHtml({ path: wordFilePath }, { styleMap });
-		const rawHtml = mammothObject.value;
+async function convertWordToHTml({ wordFilePath, outputFolderPath, documentName, styleMap }) {
+	console.log("🔃 Converting word to html...");
+	console.log({ styleMap });
+	mammoth
+		.convertToHtml({ path: wordFilePath }, { styleMap })
+		.then(async (result) => {
+			const rawHtml = result.value;
 
-		// write image files
-		let $ = cheerio.load(rawHtml);
-		const imagesFolder = outputFolderPath + "/images";
-		await createFolder(imagesFolder);
-		let html = await writeImageFiles($, imagesFolder, imageKey);
+			// write image files
+			let $ = cheerio.load(rawHtml);
+			const imagesFolder = outputFolderPath + "/images";
+			await createFolder(imagesFolder);
+			let html = await writeImageFiles($, imagesFolder, slugify(documentName));
 
-		// write html file
-		const outputHtmlFile = await writeFile(outputFolderPath + "/index.html", html);
-		await cleanUpHtml(outputHtmlFile);
-	} catch (error) {
-		console.error("🔴 Error converting Word to HTML:", error);
-	}
+			const body = cleanUpHtml(html);
+
+			// write html file
+			const templatePath = path.resolve("themes/word-to-html_anrows-ncas/template.html");
+			await writeHtmlFile({
+				templatePath,
+				content: body,
+				title: documentName,
+				outputFilePath: outputFolderPath + "/index.html"
+			});
+			// await writeFile(outputFolderPath + "/index.html", body);
+
+			console.log("✅ Word converted to HTML.");
+		})
+		.catch((err) => {
+			console.error("🔴 Error converting Word to HTML:", err);
+		});
 }
 
 async function main(tempWordFilePath, document, themeFolder) {
@@ -97,7 +131,7 @@ async function main(tempWordFilePath, document, themeFolder) {
 		const inputWordFilePath = await copyFile(tempWordFilePath, inputFolderPath + "/source.docx");
 
 		// delete temp word file
-		await deleteFile(tempWordFilePath);
+		deleteFile(tempWordFilePath);
 
 		// create an output folder
 		const outputFolderPath = await createFolder(`${newJobFolderPath}/output`);
@@ -114,12 +148,24 @@ async function main(tempWordFilePath, document, themeFolder) {
 		await writeFile(`${newJobFolderPath}/info.json`, JSON.stringify(publicationObject, null, 4));
 
 		//get styleMap from theme.json
-		const themeJsonFile = await readFile(`themes/${themeFolder}/theme.json`, "json");
+		const themesFolder = `themes/${themeFolder}`;
+		const themeJsonFile = readFile(`${themesFolder}/theme.json`, "json");
 		const themeJsonData = JSON.parse(themeJsonFile);
-		const styleMap = themeJsonData.styleMap;
+		let styleMap = themeJsonData.styleMap;
+
+		// add two-column table style map item
+		styleMap.push("table[style-name='Two columns'] => table.two-columns:fresh");
 
 		// convert word doc to html
-		await convertWordToHTml(inputWordFilePath, outputFolderPath, documentName, styleMap);
+		await convertWordToHTml({
+			wordFilePath: inputWordFilePath,
+			outputFolderPath,
+			documentName,
+			styleMap
+		});
+
+		// copy stylesheet from theme folder
+		await copyFile(`${themesFolder}/style.css`, `${outputFolderPath}/style.css`);
 	} catch (err) {
 		console.error("🔴 Error converting Word to HTML:", err);
 	}
