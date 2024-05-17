@@ -13,6 +13,7 @@ main {
 	max-width: 1200px;
 	margin: 0 auto;
 	padding-bottom: 4rem;
+	padding-top: 9rem;
 
 	@media screen and (max-width: 1200px) {
 		margin: 0 20px;

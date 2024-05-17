@@ -35,7 +35,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 ul {
 	display: flex;
 	flex-direction: column;
@@ -45,7 +45,7 @@ ul {
 		display: flex;
 		gap: 1rem;
 		background: white;
-		padding: 0.6rem 1.2rem;
+		padding: 10px 10px 10px 24px;
 		border-radius: 1rem;
 		align-items: center;
 

@@ -65,6 +65,19 @@ function cleanUpHtml(html) {
 			table.replaceWith(twoColumnDiv);
 		});
 
+		// add classes to images from alt text:
+		const pattern = /\$__(\w+)/;
+		$("img").each(function () {
+			var altText = $(this).attr("alt");
+			var match = pattern.exec(altText);
+			while (match) {
+				$(this).addClass(match[1]);
+				altText = altText.replace(match[0], "");
+				match = pattern.exec(altText);
+			}
+			$(this).attr("alt", altText);
+		});
+
 		console.log("✅ HTML cleaned up.");
 
 		// overwrite html
@@ -82,7 +95,6 @@ async function writeHtmlFile({ templatePath, content, title, outputFilePath }) {
 
 async function convertWordToHTml({ wordFilePath, outputFolderPath, documentName, styleMap }) {
 	console.log("🔃 Converting word to html...");
-	console.log({ styleMap });
 	mammoth
 		.convertToHtml({ path: wordFilePath }, { styleMap })
 		.then(async (result) => {

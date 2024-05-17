@@ -13,7 +13,7 @@ const classname = "button " + props.class;
 	background: var(--orange);
 	font-weight: bold;
 	font-size: 1rem;
-	padding: 0.5rem 1.2rem;
+	padding: 0.5em 1.2em;
 	border-radius: 0.6rem;
 	transition: 0.3s;
 	border: none;
@@ -46,6 +46,10 @@ const classname = "button " + props.class;
 
 	&.text-m {
 		font-size: 1.1rem;
+	}
+
+	&.text-small {
+		font-size: 0.9rem;
 	}
 
 	&:visited {

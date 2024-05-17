@@ -1,4 +1,4 @@
-import "./assets/main.scss";
+import "./assets/global.scss";
 
 import { createApp } from "vue";
 import App from "./App.vue";

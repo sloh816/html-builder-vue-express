@@ -9,7 +9,7 @@ import { RouterLink } from "vue-router";
 			<p>HTML Builder</p>
 		</div>
 		<nav>
-			<RouterLink to="/">Home</RouterLink>
+			<RouterLink to="/">Processes</RouterLink>
 			<RouterLink to="/publications">Publications</RouterLink>
 			<RouterLink to="/themes">Themes</RouterLink>
 		</nav>
@@ -21,10 +21,11 @@ header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 1.6rem 2rem;
+	padding: 1rem 2rem;
 	background-color: white;
 	box-shadow: 0 0 0.6rem rgba(0, 0, 0, 0.1);
-	margin-bottom: 5rem;
+	position: fixed;
+	width: 100%;
 
 	.title {
 		display: flex;
@@ -33,7 +34,7 @@ header {
 
 		p {
 			font-weight: bold;
-			font-size: 2rem;
+			font-size: 1.7rem;
 		}
 	}
 
