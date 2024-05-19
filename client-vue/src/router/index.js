@@ -39,6 +39,12 @@ const router = createRouter({
 			name: "process",
 			component: () => import("../views/ProcessView.vue"),
 			props: true
+		},
+		{
+			path: "/process/:processSlug/processing",
+			name: "processing",
+			component: () => import("../views/ProcessingView.vue"),
+			props: true
 		}
 	]
 });

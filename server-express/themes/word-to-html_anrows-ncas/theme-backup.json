@@ -24,7 +24,6 @@
         "p[style-name='Body'] => p.body-text:fresh",
         "p[style-name='Body - before bullet'] => p.body-text:fresh",
         "p[style-name='Body - bullet 1'] => ul > li.body-bullet-1:fresh",
-        "r[style-name='Emphasis'] => :fresh",
         "p[style-name='Body - bullet 2'] => ul > li > ul > li.body-bullet-2:fresh",
         "p[style-name='Body - bullet 3'] => ul > li > ul > li > ul > li.body-bullet-3:fresh",
         "p[style-name='Body - indented'] => p.body-indented:fresh",

@@ -1,6 +1,13 @@
 const { getTimestamp, slugify, formatDate, formatTime } = require("../../utils/utils.js");
-const { createFolder, copyFile, writeFile, deleteFile, readFile } = require("../../utils/filesAndFolders.js");
+const {
+	createFolder,
+	copyFile,
+	writeFile,
+	deleteFile,
+	readFile
+} = require("../../utils/filesAndFolders.js");
 const { writeImageFiles } = require("../../utils/writeImageFiles.js");
+const { writeHtmlFile } = require("../../utils/writeHtmlFile.js");
 const mammoth = require("mammoth");
 const cheerio = require("cheerio");
 const fs = require("fs").promises;
@@ -87,12 +94,6 @@ function cleanUpHtml(html) {
 	}
 }
 
-async function writeHtmlFile({ templatePath, content, title, outputFilePath }) {
-	const templateHtml = await fs.readFile(templatePath, "utf8");
-	const html = templateHtml.replace("{{ content }}", content).replace("{{ title }}", title);
-	await fs.writeFile(outputFilePath, html, "utf-8");
-}
-
 async function convertWordToHTml({ wordFilePath, outputFolderPath, documentName, styleMap }) {
 	console.log("🔃 Converting word to html...");
 	mammoth
@@ -109,11 +110,13 @@ async function convertWordToHTml({ wordFilePath, outputFolderPath, documentName,
 			const body = cleanUpHtml(html);
 
 			// write html file
-			const templatePath = path.resolve("themes/word-to-html_anrows-ncas/template.html");
+			const templatePath = "processes/Word to HTML/template.html";
 			await writeHtmlFile({
-				templatePath,
-				content: body,
-				title: documentName,
+				templateFilePath: templatePath,
+				data: {
+					content: body,
+					title: documentName
+				},
 				outputFilePath: outputFolderPath + "/index.html"
 			});
 			// await writeFile(outputFolderPath + "/index.html", body);
@@ -140,7 +143,10 @@ async function main(tempWordFilePath, document, themeFolder) {
 		const inputFolderPath = await createFolder(`${newJobFolderPath}/input`);
 
 		// copy uploaded word file from temp to job input folder
-		const inputWordFilePath = await copyFile(tempWordFilePath, inputFolderPath + "/source.docx");
+		const inputWordFilePath = await copyFile(
+			tempWordFilePath,
+			inputFolderPath + "/source.docx"
+		);
 
 		// delete temp word file
 		deleteFile(tempWordFilePath);
@@ -153,11 +159,16 @@ async function main(tempWordFilePath, document, themeFolder) {
 			name: document,
 			date: formatDate(timestamp.split("_")[0]),
 			time: formatTime(timestamp.split("_")[1].replace(/-/g, ":")),
-			folder: newJobFolder
+			folder: newJobFolder,
+			template: "Word to HTML",
+			themeFolder
 		};
 
 		// write object to a info.json file
-		await writeFile(`${newJobFolderPath}/info.json`, JSON.stringify(publicationObject, null, 4));
+		await writeFile(
+			`${newJobFolderPath}/info.json`,
+			JSON.stringify(publicationObject, null, 4)
+		);
 
 		//get styleMap from theme.json
 		const themesFolder = `themes/${themeFolder}`;
@@ -165,8 +176,9 @@ async function main(tempWordFilePath, document, themeFolder) {
 		const themeJsonData = JSON.parse(themeJsonFile);
 		let styleMap = themeJsonData.styleMap;
 
-		// add two-column table style map item
+		// add two-column table, and emphasis style map item
 		styleMap.push("table[style-name='Two columns'] => table.two-columns:fresh");
+		styleMap.push("r[style-name='Emphasis'] => em:fresh");
 
 		// convert word doc to html
 		await convertWordToHTml({

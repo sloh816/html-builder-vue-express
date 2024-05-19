@@ -7,7 +7,9 @@ const props = defineProps(["showLabels", "index", "styletype", "wordstyle", "tag
 	<div class="style-map-input">
 		<div class="style-map-input__inputs">
 			<div class="input">
-				<label :for="`sm-styletype-${index}`" class="label" v-if="showLabels">Style type:</label>
+				<label :for="`sm-styletype-${index}`" class="label" v-if="showLabels"
+					>Style type:</label
+				>
 				<select :name="`sm-styletype-${index}`">
 					<option value="p" :selected="styletype === 'p'">Paragraph</option>
 					<option value="r" :selected="styletype === 'r'">Character</option>
@@ -15,7 +17,9 @@ const props = defineProps(["showLabels", "index", "styletype", "wordstyle", "tag
 				</select>
 			</div>
 			<div class="input">
-				<label :for="`sm-wordstyle-${index}`" class="label" v-if="showLabels">Word style name:</label>
+				<label :for="`sm-wordstyle-${index}`" class="label" v-if="showLabels"
+					>Word style name:</label
+				>
 				<input type="text" :name="`sm-wordstyle-${index}`" :value="wordstyle" />
 			</div>
 			<div class="input">
@@ -23,11 +27,15 @@ const props = defineProps(["showLabels", "index", "styletype", "wordstyle", "tag
 				<input type="text" :name="`sm-tag-${index}`" :value="tag" />
 			</div>
 			<div class="input">
-				<label :for="`sm-class-${index}`" class="label" v-if="showLabels">Class name:</label>
+				<label :for="`sm-class-${index}`" class="label" v-if="showLabels"
+					>Class name:</label
+				>
 				<input type="text" :name="`sm-class-${index}`" :value="class" />
 			</div>
 		</div>
-		<button type="button" class="button secondary style-map-input__add" @click="emitAdd">Add</button>
+		<button type="button" class="button secondary style-map-input__add" @click="emitAdd">
+			Add
+		</button>
 	</div>
 </template>
 

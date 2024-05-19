@@ -5,13 +5,20 @@ import SelectInput from "@/components/formComponents/SelectInput.vue";
 </script>
 
 <template>
-	<form enctype="multipart/form-data" @submit.prevent="sendForm">
+	<form v-if="!isProcessing" enctype="multipart/form-data" @submit.prevent="sendForm" class="container">
 		<p v-if="errorMessage" class="message">{{ errorMessage }}</p>
 		<FileInput label="Upload a Word Document:" name="wordFile" @onFileUpload="handleFileUpload" />
 		<SelectInput :options="themes" name="theme" />
 		<Button class="primary text-m" type="submit">Submit</Button>
-		<p v-if="message" class="message message--success">{{ message }}</p>
 	</form>
+	<div v-else-if="isProcessing" class="container process-messages">
+		<p class="message message--green">Form data submitted !</p>
+		<p class="message message--yellow">Converting Word document to HTML...</p>
+		<div v-if="processSuccess" class="process-messages__success">
+			<p class="message message--green">Successfully converted Word document to HTML !</p>
+			<Button class="secondary left" href="/publications">See Publication</Button>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -23,9 +30,10 @@ export default {
 	data() {
 		return {
 			wordFile: "",
-			message: "",
 			errorMessage: "",
-			themes: []
+			themes: [],
+			isProcessing: false,
+			processSuccess: false
 		};
 	},
 
@@ -48,12 +56,14 @@ export default {
 
 		async sendForm(event) {
 			if (this.wordFile) {
+				this.isProcessing = true;
+
 				const formData = new FormData();
 				formData.append("wordFile", this.wordFile);
 				formData.append("theme", event.target.theme.value);
 
 				this.errorMessage = "";
-				this.message = await sendWordToHTmlForm(formData);
+				this.processSuccess = await sendWordToHTmlForm(formData);
 			} else {
 				this.errorMessage = "Please upload a file";
 			}
@@ -61,3 +71,12 @@ export default {
 	}
 };
 </script>
+
+<style lang="scss" scoped>
+.process-messages,
+.process-messages__success {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+</style>

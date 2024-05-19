@@ -36,25 +36,16 @@ body {
 	}
 }
 
-form {
+.container {
 	background: white;
 	padding: 4rem;
 	border-radius: 1.6rem;
+}
+
+form {
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;
-
-	p.message {
-		background: var(--light-orange);
-		padding: 1rem 2rem;
-		border-radius: 0.6rem;
-		border-left: 4px solid var(--orange);
-
-		&--success {
-			background: var(--light-green);
-			border-left: 4px solid var(--green);
-		}
-	}
 
 	.label {
 		font-weight: bold;
@@ -65,5 +56,27 @@ form {
 
 	button[type="submit"] {
 		margin-top: 2rem;
+	}
+}
+
+p.message {
+	background: var(--light-orange);
+	padding: 1rem 2rem;
+	border-radius: 0.6rem;
+	border-left: 4px solid var(--orange);
+
+	&--yellow {
+		background: #fef3c7;
+		border-left: 4px solid #f59e0b;
+	}
+
+	&--red {
+		background: #fee2e2;
+		border-left: 4px solid #ef4444;
+	}
+
+	&--green {
+		background: var(--light-green);
+		border-left: 4px solid var(--green);
 	}
 }

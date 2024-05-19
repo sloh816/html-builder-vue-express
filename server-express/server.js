@@ -44,7 +44,10 @@ app.get("/api/themes", async (req, res) => {
 		const themesData = [];
 		for (const folder in themeFolders) {
 			try {
-				const themeData = await readFile(`./themes/${themeFolders[folder]}/theme.json`, "json");
+				const themeData = await readFile(
+					`./themes/${themeFolders[folder]}/theme.json`,
+					"json"
+				);
 				themesData.push(JSON.parse(themeData));
 			} catch {
 				console.error("🔴 Error reading theme data:", err);
@@ -64,7 +67,10 @@ app.get("/api/publications", async (req, res) => {
 		const publicationsData = [];
 		for (const folder in publicationFolders) {
 			try {
-				const publicationData = await readFile(`./publications/${publicationFolders[folder]}/info.json`, "json");
+				const publicationData = await readFile(
+					`./publications/${publicationFolders[folder]}/info.json`,
+					"json"
+				);
 				publicationsData.push(JSON.parse(publicationData));
 			} catch (err) {
 				console.error("🔴 Error reading publication data:", err);
@@ -75,6 +81,22 @@ app.get("/api/publications", async (req, res) => {
 		console.error("🔴 Error fetching subfolders:", error);
 		res.status(500).json({ error: "Internal server error" });
 	}
+});
+
+// Serve a list of 'style.css' data
+app.get("/api/theme-styles", async (req, res) => {
+	const themeFolders = await getSubfolders("./themes");
+	const themeStyles = {};
+	for (const index in themeFolders) {
+		const filePath = path.resolve(path.join("themes", themeFolders[index], "style.css"));
+		try {
+			const fileData = await fs.readFile(filePath, "utf-8");
+			themeStyles[themeFolders[index]] = fileData;
+		} catch {
+			themeStyles[themeFolders[index]] = "";
+		}
+	}
+	res.json(themeStyles);
 });
 // #endregion
 
@@ -89,16 +111,20 @@ app.post("/api/word-to-html", upload.single("wordFile"), async (req, res) => {
 	// add .docx extension to the file path
 	fs.rename(req.file.path, req.file.path + ".docx");
 
-	// execute 'Word to HTML' main function:
-	runProcess({
-		processFolderName: "Word to HTML",
-		tempWordFilePath: req.file.path + ".docx",
-		document: req.file.originalname,
-		themeFolder: "word-to-html_" + req.body.theme
-	});
+	try {
+		// execute 'Word to HTML' main function:
+		await runProcess({
+			processFolderName: "Word to HTML",
+			tempWordFilePath: req.file.path + ".docx",
+			document: req.file.originalname,
+			themeFolder: "word-to-html_" + req.body.theme
+		});
 
-	// return a response
-	res.json({ file: req.file, body: req.body });
+		// return a response
+		res.json({ file: req.file, body: req.body, success: true });
+	} catch (err) {
+		console.error("🔴 Error running process:", err);
+	}
 });
 
 app.post("/api/edit-theme", upload.single(""), async (req, res) => {

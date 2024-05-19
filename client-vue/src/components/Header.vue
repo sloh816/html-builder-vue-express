@@ -26,6 +26,7 @@ header {
 	box-shadow: 0 0 0.6rem rgba(0, 0, 0, 0.1);
 	position: fixed;
 	width: 100%;
+	z-index: 4;
 
 	.title {
 		display: flex;
