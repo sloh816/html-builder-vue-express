@@ -8,6 +8,9 @@ import { RouterLink } from "vue-router";
 		<li v-for="process in processes">
 			<RouterLink :to="`/process/${process.slug}`">{{ process.name }}</RouterLink>
 		</li>
+        <li>
+            <RouterLink to="/">Checklists</RouterLink>
+        </li>
 	</ul>
 </template>
 

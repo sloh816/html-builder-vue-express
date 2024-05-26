@@ -4,7 +4,7 @@
 
 <route lang="yaml">
 meta:
-    layout: "noHeader"
+    layout: "blank"
 </route>
 
 <script>

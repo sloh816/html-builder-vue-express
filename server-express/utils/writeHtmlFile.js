@@ -2,6 +2,7 @@ const fs = require("fs").promises;
 const path = require("path");
 
 async function writeHtmlFile({ templateFilePath, data, outputFilePath }) {
+    console.log("🔃 Writing HTML file...");
 	const fullTemplathFilePath = path.resolve(templateFilePath);
 	const fullOuputFilePath = path.resolve(outputFilePath);
 

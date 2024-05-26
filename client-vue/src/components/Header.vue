@@ -9,7 +9,7 @@ import { RouterLink } from "vue-router";
 			<p>HTML Builder</p>
 		</div>
 		<nav>
-			<RouterLink to="/">Processes</RouterLink>
+			<RouterLink to="/">Dashboard</RouterLink>
 			<RouterLink to="/publications">Publications</RouterLink>
 			<RouterLink to="/themes">Themes</RouterLink>
 		</nav>

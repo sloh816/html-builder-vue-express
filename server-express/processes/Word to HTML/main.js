@@ -1,4 +1,4 @@
-const { getTimestamp, slugify, formatDate, formatTime } = require("../../utils/utils.js");
+const { getTimestamp, slugify, formatDate, formatTime } = require("../../utils/functions.js");
 const {
 	createFolder,
 	copyFile,
@@ -10,8 +10,6 @@ const { writeImageFiles } = require("../../utils/writeImageFiles.js");
 const { writeHtmlFile } = require("../../utils/writeHtmlFile.js");
 const mammoth = require("mammoth");
 const cheerio = require("cheerio");
-const fs = require("fs").promises;
-const path = require("path");
 
 function cleanUpHtml(html) {
 	console.log("🔃 Cleaning up HTML...");
@@ -99,13 +97,13 @@ async function convertWordToHTml({ wordFilePath, outputFolderPath, documentName,
 	mammoth
 		.convertToHtml({ path: wordFilePath }, { styleMap })
 		.then(async (result) => {
-			const rawHtml = result.value;
+			let html = result.value;
 
 			// write image files
-			let $ = cheerio.load(rawHtml);
+			let $ = cheerio.load(html);
 			const imagesFolder = outputFolderPath + "/images";
 			await createFolder(imagesFolder);
-			let html = await writeImageFiles($, imagesFolder, slugify(documentName));
+			html = await writeImageFiles($, imagesFolder, slugify(documentName));
 
 			const body = cleanUpHtml(html);
 
@@ -119,7 +117,6 @@ async function convertWordToHTml({ wordFilePath, outputFolderPath, documentName,
 				},
 				outputFilePath: outputFolderPath + "/index.html"
 			});
-			// await writeFile(outputFolderPath + "/index.html", body);
 
 			console.log("✅ Word converted to HTML.");
 		})
