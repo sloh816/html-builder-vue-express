@@ -17,7 +17,10 @@ export default {
 
 	data() {
 		return {
-			process: {}
+			process: {
+                name: '',
+                slug: ''
+            }
 		};
 	},
 
