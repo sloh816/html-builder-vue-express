@@ -2,7 +2,7 @@
     <h1 class="page-title">Themes</h1>
     <ul>
         <li v-for="(theme, index) in themes" :key="index">
-            <a :href="`/edit-theme/${theme.template}/${theme.slug}`">{{ theme.themeName }}</a>
+            <a :href="`/themes/${theme.template}/${theme.slug}/edit`">{{ theme.themeName }}</a>
         </li>
     </ul>
 </template>

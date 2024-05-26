@@ -2,21 +2,26 @@
 	<iframe :src="indexFile" width="100%" height="100%" frameborder="0"></iframe>
 </template>
 
+<route lang="yaml">
+meta:
+    layout: "noHeader"
+</route>
+
 <script>
 import { getPublicationData, server_url } from "@/server.js";
 export default {
 	name: "PublicationView",
-	props: ["publicationFolder"],
+	props: ["publication"],
 
 	data() {
 		return {
-			publication: {},
-			indexFile: server_url + "/" + this.publicationFolder + "/output/index.html"
+			publicationObject: {},
+			indexFile: server_url + "/" + this.publication + "/output/index.html"
 		};
 	},
 
 	async created() {
-		this.publication = await getPublicationData(this.publicationFolder);
+		this.publicationObject = await getPublicationData(this.publication);
 	}
 };
 </script>
@@ -24,7 +29,7 @@ export default {
 <style scoped lang="scss">
 iframe {
 	background: white;
-	width: 100vw;
+	width: 100%;
 	height: 100vh;
 	position: absolute;
 	top: 0;

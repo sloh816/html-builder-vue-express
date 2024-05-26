@@ -1,52 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+// import routes from 'pages-generated';
+import { setupLayouts } from 'virtual:generated-layouts';
+import generatedRoutes from '~pages'
+
+const routes = setupLayouts(generatedRoutes)
 
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL),
-	routes: [
-		{
-			path: "/",
-			name: "home",
-			component: HomeView
-		},
-		{
-			path: "/publications",
-			name: "publications",
-			// route level code-splitting
-			// this generates a separate chunk (About.[hash].js) for this route
-			// which is lazy-loaded when the route is visited.
-			component: () => import("../views/PublicationsView.vue")
-		},
-		{
-			path: "/publication/:publicationFolder",
-			name: "publication",
-			component: () => import("../views/PublicationView.vue"),
-			props: true
-		},
-		{
-			path: "/themes",
-			name: "themes",
-			component: () => import("../views/ThemesView.vue")
-		},
-		{
-			path: "/edit-theme/:template/:themeSlug",
-			name: "editTheme",
-			component: () => import("../views/EditThemeView.vue"),
-			props: true
-		},
-		{
-			path: "/process/:processSlug",
-			name: "process",
-			component: () => import("../views/ProcessView.vue"),
-			props: true
-		},
-		{
-			path: "/process/:processSlug/processing",
-			name: "processing",
-			component: () => import("../views/ProcessingView.vue"),
-			props: true
-		}
-	]
-});
+    history: createWebHistory(),
+    routes,
+})
 
 export default router;

@@ -29,5 +29,5 @@ coverage
 
 *.tsbuildinfo
 
-publications/
+server-express/publications/
 temp/

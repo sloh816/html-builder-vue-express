@@ -48,7 +48,7 @@ import { getThemeData, sendEditThemeForm } from "@/server";
 
 export default {
 	name: "editTheme",
-	props: ["template", "themeSlug"],
+	props: ["template", "theme"],
 
 	data() {
 		return {
@@ -63,7 +63,7 @@ export default {
 	},
 
 	async created() {
-		this.themeData = await getThemeData(this.themeSlug);
+		this.themeData = await getThemeData(this.theme);
 		this.styleMap = this.themeData.styleMap;
 	},
 
