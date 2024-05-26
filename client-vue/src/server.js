@@ -12,6 +12,15 @@ export async function getProcesses() {
 	}
 }
 
+export async function getProcess(processSlug) {
+    try {
+        const processes = await getProcesses();
+        return processes.find((process) => process.slug === processSlug);
+    } catch (error) {
+        console.error("Error getting process:", error);
+    }
+}
+
 export async function getPublications() {
 	try {
 		const response = await axios.get(`/api/publications`);

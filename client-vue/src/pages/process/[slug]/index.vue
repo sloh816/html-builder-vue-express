@@ -10,28 +10,19 @@ import InDesignToHtml from "@/components/forms/InDesignToHtml.vue";
 </template>
 
 <script>
-import { getProcesses } from "@/server";
+import { getProcess } from "@/server";
 
 export default {
-	name: "Process",
 	props: ["slug"],
 
 	data() {
 		return {
-			allProcesses: [],
 			process: {}
 		};
 	},
 
 	async created() {
-		this.allProcesses = await getProcesses();
-		this.process = this.getProcess();
-	},
-
-	methods: {
-		getProcess() {
-			return this.allProcesses.find((process) => process.slug === this.process);
-		}
+		this.process = await getProcess(this.slug);
 	}
 };
 </script>

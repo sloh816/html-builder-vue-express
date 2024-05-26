@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const fs = require("fs").promises;
 const path = require("path");
 
-const { slugify } = require("./utils/utils.js");
+const { slugify } = require("./utils/functions.js");
 const { runProcess } = require("./processes/runProcess");
 const { getSubfolders, createPublicationsFolder, readFile } = require("./utils/filesAndFolders.js");
 const { updateStyleMap } = require("./utils/editData.js");
@@ -17,7 +17,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// #region Routes for server to retrieve data
+// #region Routes for server to retrieve data from client
 app.use(express.static(path.resolve("publications")));
 
 // Serve a list of 'processes' subfolders
