@@ -8,7 +8,8 @@ meta:
 </route>
 
 <script>
-import { getPublicationData, server_url } from "@/server.js";
+import { getPublicationData, server_url } from "@/server/get";
+
 export default {
 	name: "PublicationView",
 	props: ["publication"],

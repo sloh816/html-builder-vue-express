@@ -17,7 +17,7 @@ import Button from "@/components/Button.vue";
 </template>
 
 <script>
-import { getPublications } from "@/server.js";
+import { getPublications } from "@/server/get";
 
 export default {
 	name: "PublicationsView",

@@ -22,7 +22,8 @@ import SelectInput from "@/components/formComponents/SelectInput.vue";
 </template>
 
 <script>
-import { sendWordToHTmlForm, getThemesData } from "@/server";
+import { sendWordToHtmlForm } from "@/server/post";
+import { getThemesData } from "@/server/get";
 
 export default {
 	name: "wordToHtml",
@@ -63,7 +64,7 @@ export default {
 				formData.append("theme", event.target.theme.value);
 
 				this.errorMessage = "";
-				this.processSuccess = await sendWordToHTmlForm(formData);
+				this.processSuccess = await sendWordToHtmlForm(formData);
 			} else {
 				this.errorMessage = "Please upload a file";
 			}

@@ -7,7 +7,7 @@ import { Sandpack } from "sandpack-vue3";
 </template>
 
 <script>
-import { getThemeStyle } from "@/server.js";
+import { getThemeStyle } from "@/server/get";
 
 export default {
 	name: "SandpackEditor",

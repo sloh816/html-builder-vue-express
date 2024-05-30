@@ -44,7 +44,8 @@ import SandpackEditor from "@/components/SandpackEditor.vue";
 </template>
 
 <script>
-import { getThemeData, sendEditThemeForm } from "@/server";
+import { getThemeData } from "@/server/get";
+import { sendEditThemeForm } from "@/server/post";
 
 export default {
 	name: "editTheme",

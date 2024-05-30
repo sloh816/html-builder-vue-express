@@ -15,7 +15,7 @@ import { RouterLink } from "vue-router";
 </template>
 
 <script>
-import { getProcesses } from "@/server";
+import { getProcesses } from "@/server/get";
 
 export default {
 	data() {

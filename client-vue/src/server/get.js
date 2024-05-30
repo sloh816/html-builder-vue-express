@@ -2,7 +2,6 @@ import axios from "axios";
 
 export const server_url = "http://localhost:3000";
 
-// #region GET data from server
 export async function getProcesses() {
 	try {
 		const response = await axios.get(`/api/processes`);
@@ -74,26 +73,3 @@ export async function getThemeStyle(themeFolder) {
 		console.error("🔴 Error getting theme styles:", error);
 	}
 }
-// #endregion
-
-// #region POST data to server
-export async function sendWordToHTmlForm(formData) {
-	try {
-		const response = await axios.post("/api/word-to-html", formData);
-		return response.data.success;
-	} catch (err) {
-		console.error(err);
-		return "something went wrong";
-	}
-}
-
-export async function sendEditThemeForm(formData) {
-	try {
-		await axios.post("/api/edit-theme", formData);
-		return "Theme has been updated";
-	} catch (err) {
-		console.error(err);
-		return "something went wrong";
-	}
-}
-// #endregion

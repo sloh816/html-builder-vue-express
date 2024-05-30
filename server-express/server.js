@@ -2,7 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 
 const fs = require("fs").promises;
 const path = require("path");
@@ -14,8 +14,8 @@ const { updateStyleMap } = require("./utils/editData.js");
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 // #region Routes for server to retrieve data from client
 app.use(express.static(path.resolve("publications")));
@@ -115,9 +115,11 @@ app.post("/api/word-to-html", upload.single("wordFile"), async (req, res) => {
 		// execute 'Word to HTML' main function:
 		await runProcess({
 			processFolderName: "Word to HTML",
-			tempWordFilePath: req.file.path + ".docx",
-			document: req.file.originalname,
-			themeFolder: "word-to-html_" + req.body.theme
+			options: {
+                tempWordFilePath: req.file.path + ".docx",
+                document: req.file.originalname,
+                themeFolder: "word-to-html_" + req.body.theme
+            }
 		});
 
 		// return a response

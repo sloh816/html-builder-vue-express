@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { getThemesData } from "@/server";
+import { getThemesData } from "@/server/get";
 
 export default {
     data() {
