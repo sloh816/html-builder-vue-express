@@ -20,6 +20,15 @@ export async function getThemes() {
     }
 }
 
+export async function getThemeInfo(folder) {
+    try {
+        const themes = await getThemes();
+        return themes.filter( theme => theme.folder === folder )[0]
+    } catch (error) {
+        console.error("🔴 Error getting theme info:", error);
+    }
+}
+
 export async function getPublications() {
     try {
         const response = await axios.get(`/api/publications`);

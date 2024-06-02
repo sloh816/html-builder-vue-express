@@ -5,9 +5,7 @@ import Accordion from "@/components/Accordion.vue";
 </script>
 
 <template>
-	<h1 class="page-title">
-		{{ themeData.themeName }}
-	</h1>
+	<h1 class="page-title">{{ themeInfo.name }}</h1>
 	<form @submit.prevent="updateTheme" class="container">
 		<Accordion summary="Map Word styles to class names:" showButton="Show Style Map" hideButton="Hide Style Map">
 			<div class="style-map__inputs">
@@ -33,16 +31,16 @@ import Accordion from "@/components/Accordion.vue";
 </template>
 
 <script>
-import { getThemeData, getThemeStyle } from "@/server/get";
-import { sendEditThemeForm } from "@/server/post";
+import { getThemeInfo } from "@/server/get";
+// import { sendEditThemeForm } from "@/server/post";
 
 export default {
 	name: "editTheme",
-	props: ["template", "theme"],
+	props: ["process", "theme"],
 
 	data() {
 		return {
-			themeData: {},
+			themeInfo: {},
 			styleMap: [],
 			styleInputCount: 1,
 			message: "",
@@ -52,9 +50,8 @@ export default {
 	},
 
 	async created() {
-		this.themeData = await getThemeData(this.theme);
-		this.styleMap = this.themeData.styleMap;
-        this.themeStylesheet = await getThemeStyle(`${this.template}_${this.theme}`);
+		this.themeInfo = await getThemeInfo(`${this.process}_${this.theme}`)
+        this.styleMap = this.themeInfo.styleMap
 	},
 
 	methods: {
@@ -89,25 +86,25 @@ export default {
 			return match ? match[1] : null;
 		},
 
-		async updateTheme(submitEvent) {
-			const formData = new FormData();
-			formData.append("themeFolder", `${this.template}_${this.theme}`);
+		// async updateTheme(submitEvent) {
+		// 	const formData = new FormData();
+		// 	formData.append("themeFolder", `${this.template}_${this.theme}`);
 
-			const wordStyleInputs = submitEvent.target.querySelectorAll("[name^='sm-wordstyle']");
-			wordStyleInputs.forEach((input, index) => {
-				if (input.value !== "") {
-					const key = input.name.replace("sm-wordstyle-", "");
-					const wordStyle = input.value;
-					const styleType = submitEvent.target.querySelector(`[name='sm-styletype-${key}']`).value;
-					const tag = submitEvent.target.querySelector(`[name='sm-tag-${key}']`).value;
-					const className = submitEvent.target.querySelector(`[name='sm-class-${key}']`).value ? `.${submitEvent.target.querySelector(`[name='sm-class-${key}']`).value}` : "";
-					const styleMapItem = `${styleType}[style-name='${wordStyle}'] => ${tag}${className}:fresh`;
-					formData.append(`styleMapItem-${index}`, styleMapItem);
-				}
-			});
+		// 	const wordStyleInputs = submitEvent.target.querySelectorAll("[name^='sm-wordstyle']");
+		// 	wordStyleInputs.forEach((input, index) => {
+		// 		if (input.value !== "") {
+		// 			const key = input.name.replace("sm-wordstyle-", "");
+		// 			const wordStyle = input.value;
+		// 			const styleType = submitEvent.target.querySelector(`[name='sm-styletype-${key}']`).value;
+		// 			const tag = submitEvent.target.querySelector(`[name='sm-tag-${key}']`).value;
+		// 			const className = submitEvent.target.querySelector(`[name='sm-class-${key}']`).value ? `.${submitEvent.target.querySelector(`[name='sm-class-${key}']`).value}` : "";
+		// 			const styleMapItem = `${styleType}[style-name='${wordStyle}'] => ${tag}${className}:fresh`;
+		// 			formData.append(`styleMapItem-${index}`, styleMapItem);
+		// 		}
+		// 	});
 
-			this.message = await sendEditThemeForm(formData);
-		}
+		// 	this.message = await sendEditThemeForm(formData);
+		// }
 	}
 };
 </script>
