@@ -1,4 +1,3 @@
-const { create } = require("domain");
 const fsp = require("fs").promises;
 const fs = require("fs");
 const path = require("path");
@@ -39,24 +38,23 @@ function writeFile(filePath, fileData) {
 
 function deleteFile(filePath) {
 	try {
-		// Delete the file
+		console.log("🔃 Deleting file..." + filePath);
 		fs.unlinkSync(filePath);
-		console.log(`✅ File written successfully:"`, filePath);
+		console.log(`✅ File deleted successfully:"`, filePath);
 	} catch (error) {
 		console.error("🔴 Error deleting file:", err);
 	}
 }
 
-function readFile(filePath) {
-	try {
-		// Read the file synchronously and return its contents as a string
-		const fileContents = fs.readFileSync(filePath, "utf8");
-		return fileContents;
-	} catch (error) {
-		console.error(`Error reading file: ${error.message}`);
-		return null;
-	}
-}
+async function readFile(filePath) {
+    try {
+      const data = await fsp.readFile(filePath, 'utf8');
+      return data;
+    } catch (error) {
+      console.error(`Error reading file from path: ${filePath}`);
+      throw error;
+    }
+  }
 
 async function getSubfolders(folderPath) {
 	console.log("🔃 Getting subfolders from..." + folderPath);
@@ -96,7 +94,7 @@ async function getFiles(folderPath) {
 }
 
 async function createPublicationsFolder() {
-	const publicationFolder = path.resolve("publications");
+	const publicationFolder = path.resolve("db/publications");
 	try {
 		await fsp.access(publicationFolder);
 	} catch (err) {

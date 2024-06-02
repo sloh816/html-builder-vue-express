@@ -12,7 +12,7 @@ import WordToHtmlER from "@/components/forms/WordToHtmlER.vue";
 </template>
 
 <script>
-import { getProcess } from "@/server/get";
+// import { getProcess } from "@/server/get";
 
 export default {
 	props: ["slug"],
@@ -26,8 +26,8 @@ export default {
 		};
 	},
 
-	async created() {
-		this.process = await getProcess(this.slug);
-	}
+	// async created() {
+	// 	this.process = await getProcess(this.slug);
+	// }
 };
 </script>

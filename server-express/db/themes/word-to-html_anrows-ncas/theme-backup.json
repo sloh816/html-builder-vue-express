@@ -41,6 +41,7 @@
         "p[style-name='TOC 2'] => p.toc-2:fresh",
         "p[style-name='TOC 3'] => p.toc-3:fresh",
         "p[style-name='Table - subheading'] => p.table-subheading:fresh",
-        "table[style-name='Callout box - dotted'] => div.callout-box-border-left:fresh"
+        "table[style-name='Callout box - dotted'] => div.callout-box-border-left:fresh",
+        "p[style-name='test'] => div.new-style:fresh"
     ]
 }

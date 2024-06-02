@@ -10,12 +10,12 @@ export async function sendWordToHtmlForm(formData) {
 	}
 }
 
-export async function sendEditThemeForm(formData) {
-	try {
-		await axios.post("/api/edit-theme", formData);
-		return "Theme has been updated";
-	} catch (err) {
-		console.error(err);
-		return "something went wrong";
-	}
-}
+// export async function sendEditThemeForm(formData) {
+// 	try {
+// 		await axios.post("/api/edit-theme", formData);
+// 		return "Theme has been updated";
+// 	} catch (err) {
+// 		console.error(err);
+// 		return "something went wrong";
+// 	}
+// }

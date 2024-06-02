@@ -1,7 +1,7 @@
 <script setup>
 import StyleMapInput from "@/components/formComponents/StyleMapInput.vue";
 import Button from "@/components/Button.vue";
-import SandpackEditor from "@/components/SandpackEditor.vue";
+import Accordion from "@/components/Accordion.vue";
 </script>
 
 <template>
@@ -9,15 +9,8 @@ import SandpackEditor from "@/components/SandpackEditor.vue";
 		{{ themeData.themeName }}
 	</h1>
 	<form @submit.prevent="updateTheme" class="container">
-		<div class="style-map">
-			<div class="style-map__heading">
-				<h2>Map Word styles to class names:</h2>
-				<button class="button secondary" id="toggle-style-map" type="button" @click="toggleStyleMap">
-					<span v-if="showStyleMap">Hide Style Map</span>
-					<span v-if="!showStyleMap">Show Style Map</span>
-				</button>
-			</div>
-			<div v-if="showStyleMap" class="style-map__inputs">
+		<Accordion summary="Map Word styles to class names:" showButton="Show Style Map" hideButton="Hide Style Map">
+			<div class="style-map__inputs">
 				<StyleMapInput v-if="styleMap.length === 0" showLabels="true" @addButton="addStyleInput" index="0" />
 				<StyleMapInput v-else showLabels="true" @addButton="addStyleInput" index="0" :styletype="getStyleType(styleMap[0])" :wordstyle="getWordStyle(styleMap[0])" :tag="getTag(styleMap[0])" :class="getClass(styleMap[0])" />
 
@@ -29,22 +22,18 @@ import SandpackEditor from "@/components/SandpackEditor.vue";
 					<StyleMapInput @addButton="addStyleInput" :index="n + styleMap.length - 1" />
 				</div>
 			</div>
-		</div>
+        </Accordion>
 
-		<div>
-			<h2>Stylesheet:</h2>
-			<button @click="generateIndexHtml" class="button secondary left" type="button">Generate HTML</button>
-			<SandpackEditor :indexHtmlCode="indexHtml" :key="sandpackKey" />
-		</div>
+        <Accordion summary="Stylesheet:" showButton="Show stylesheet" hideButton="Hide stylesheet">
+            <pre class="stylesheet">{{ themeStylesheet }}</pre>
+        </Accordion>
 		<Button type="submit" class="primary text-m">Update theme</Button>
-		<p v-if="message" class="message message--green">
-			{{ message }}
-		</p>
+		<p v-if="message" class="message message--green">{{ message }}</p>
 	</form>
 </template>
 
 <script>
-import { getThemeData } from "@/server/get";
+import { getThemeData, getThemeStyle } from "@/server/get";
 import { sendEditThemeForm } from "@/server/post";
 
 export default {
@@ -58,14 +47,14 @@ export default {
 			styleInputCount: 1,
 			message: "",
 			showStyleMap: false,
-			indexHtml: "",
-			sandpackKey: 0
+            themeStylesheet: "",
 		};
 	},
 
 	async created() {
 		this.themeData = await getThemeData(this.theme);
 		this.styleMap = this.themeData.styleMap;
+        this.themeStylesheet = await getThemeStyle(`${this.template}_${this.theme}`);
 	},
 
 	methods: {
@@ -100,54 +89,9 @@ export default {
 			return match ? match[1] : null;
 		},
 
-		generateIndexHtml() {
-			const styleMap = this.styleMap.map((styleMapItem) => {
-				const styleType = this.getStyleType(styleMapItem);
-				const wordStyle = this.getWordStyle(styleMapItem);
-				const tag = this.getTag(styleMapItem);
-				const className = this.getClass(styleMapItem);
-
-				if (styleType !== "table") {
-					let openTags = tag.split(" > ");
-					openTags[openTags.length - 1] = `${openTags[openTags.length - 1]} class="${className}"`;
-					openTags = openTags
-						.map((t) => {
-							return `<${t}>`;
-						})
-						.join("");
-
-					const closingTags = tag
-						.split(" > ")
-						.map((t) => {
-							return `</${t}>`;
-						})
-						.join("");
-					return `${openTags}${wordStyle}${closingTags}`;
-				}
-			});
-
-			const indexHtml = `
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="style.css" />
-        <title>Document</title>
-    </head>
-    <body>
-        <div class="html-content">${styleMap.join("\n\t\t")}</div>
-    </body>
-</html>
-            `;
-			this.indexHtml = indexHtml;
-			this.sandpackKey++;
-		},
-
 		async updateTheme(submitEvent) {
 			const formData = new FormData();
-			formData.append("themeFolder", `${this.template}_${this.themeSlug}`);
+			formData.append("themeFolder", `${this.template}_${this.theme}`);
 
 			const wordStyleInputs = submitEvent.target.querySelectorAll("[name^='sm-wordstyle']");
 			wordStyleInputs.forEach((input, index) => {
@@ -169,29 +113,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.style-map {
-	display: flex;
-	flex-direction: column;
-	gap: 2rem;
+.style-map__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
 
-	&__heading {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		h2 {
-			margin: 0;
-		}
-	}
-
-	&__inputs {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	#toggle-style-map {
-		margin: 0;
-	}
+.stylesheet {
+    background: white;
+    padding: 1rem;
+    tab-size: 4;
+    border-radius: 1rem;
 }
 </style>

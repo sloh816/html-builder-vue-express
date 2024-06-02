@@ -8,7 +8,7 @@ import SelectInput from "@/components/formComponents/SelectInput.vue";
 	<form v-if="!isProcessing" enctype="multipart/form-data" @submit.prevent="sendForm" class="container">
 		<p v-if="errorMessage" class="message">{{ errorMessage }}</p>
 		<FileInput label="Upload a Word Document:" name="wordFile" @onFileUpload="handleFileUpload" />
-		<SelectInput :options="themes" name="theme" />
+		<SelectInput :options="themeOptions" name="theme" />
 		<Button class="primary text-m" type="submit">Submit</Button>
 	</form>
 	<div v-else-if="isProcessing" class="container process-messages">
@@ -23,7 +23,7 @@ import SelectInput from "@/components/formComponents/SelectInput.vue";
 
 <script>
 import { sendWordToHtmlForm } from "@/server/post";
-import { getThemesData } from "@/server/get";
+import { getThemes } from "@/server/get";
 
 export default {
 	name: "wordToHtml",
@@ -32,22 +32,22 @@ export default {
 		return {
 			wordFile: "",
 			errorMessage: "",
-			themes: [],
+			themeOptions: [],
 			isProcessing: false,
 			processSuccess: false
 		};
 	},
 
-	async created() {
-		const themesData = await getThemesData("word-to-html");
-		themesData.forEach((theme) => {
-			this.themes.push({
-				name: theme.themeName,
-				value: theme.slug,
-				key: theme.slug
-			});
-		});
-	},
+    async created() {
+        const themes = await getThemes();
+        themes.forEach( (theme) => {
+            this.themeOptions.push({
+                name: theme.themeName,
+                value: theme.themeName,
+                key: theme.themeSlug
+            })
+        })
+    },
 
 	methods: {
 		handleFileUpload(file) {
@@ -57,11 +57,14 @@ export default {
 
 		async sendForm(event) {
 			if (this.wordFile) {
-				this.isProcessing = true;
+				// this.isProcessing = true;
 
 				const formData = new FormData();
 				formData.append("wordFile", this.wordFile);
-				formData.append("theme", event.target.theme.value);
+				formData.append("themeName", event.target.theme.value);
+
+                const themeSlug = this.themeOptions.find( (theme) => theme.name === event.target.theme.value).key;
+                formData.append("themeSlug", themeSlug);
 
 				this.errorMessage = "";
 				this.processSuccess = await sendWordToHtmlForm(formData);

@@ -1,7 +1,7 @@
 {
-    "template": "word-to-html",
     "themeName": "ANROWS",
-    "slug": "anrows",
+    "themeSlug": "anrows",
+    "processSlug": "word-to-html",
     "styleMap": [
         "p[style-name='Cover title'] => h1.cover-title:fresh",
         "p[style-name='Cover subtitle'] => p.cover-subtitle:fresh",

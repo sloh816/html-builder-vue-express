@@ -14,6 +14,8 @@ async function writeHtmlFile({ templateFilePath, data, outputFilePath }) {
 	}
 
 	await fs.writeFile(fullOuputFilePath, html, "utf-8");
+
+    console.log("✅ HTML files written successfully: ", outputFilePath)
 }
 
 module.exports = {

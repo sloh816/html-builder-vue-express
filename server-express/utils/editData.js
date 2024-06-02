@@ -1,4 +1,4 @@
-const { readFile, writeFile, copyFile } = require("./filesAndFolders.js");
+const { readFile, writeFile, copyFile } = require("./fileSystem.js");
 
 async function updateStyleMap(newStyleMap, themeFolder) {
 	console.log({ newStyleMap, themeFolder });
