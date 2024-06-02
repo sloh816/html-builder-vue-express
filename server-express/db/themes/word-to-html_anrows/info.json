@@ -1,6 +1,6 @@
 {
-    "themeName": "ANROWS",
-    "themeSlug": "anrows",
+    "name": "ANROWS",
+    "slug": "anrows",
     "processSlug": "word-to-html",
     "styleMap": [
         "p[style-name='Cover title'] => h1.cover-title:fresh",

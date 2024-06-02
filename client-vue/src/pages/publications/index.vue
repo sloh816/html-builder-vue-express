@@ -8,7 +8,7 @@ import Button from "@/components/Button.vue";
 		<li v-for="(publication, index) in publications" :key="index">
 			<span class="date">{{ publication.date }}</span>
 			<span class="time">{{ publication.time }}</span>
-			<span class="name">{{ publication.name }}</span>
+			<span class="name">{{ publication.folder }}</span>
 			<div class="buttons">
 				<Button class="secondary text-small" :href="`/publications/${publication.folder}/preview`">Preview</Button>
 			</div>

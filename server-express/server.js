@@ -3,11 +3,9 @@
 const express = require("express");
 const cors = require("cors");
 
-const Processes = require("./views/processes");
-
 const WordToHtmlHandler = require("./controllers/handleWordToHtml");
-const Themes = require("./views/themes");
-const { createPublicationsFolder } = require("./utils/fileSystem")
+const { createPublicationsFolder } = require("./utils/fileSystem");
+const Info = require("./views/info");
 
 class Server {
 
@@ -24,11 +22,14 @@ class Server {
 
     routes() {
         // servers
-        const processes = new Processes();
-        this.app.use(processes.router);
+        const processes = new Info("processes")
+        this.app.use(processes.router)
 
-        const themes = new Themes();
-        this.app.use(themes.router);
+        const themes = new Info("themes")
+        this.app.use(themes.router)
+
+        const publications = new Info("publications")
+        this.app.use(publications.router)
 
         // handlers
         const wordToHtmlHandler = new WordToHtmlHandler();
