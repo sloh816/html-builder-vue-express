@@ -4,15 +4,15 @@ class Theme {
     constructor(themeName, themeSlug, processSlug) {
         this.themeName = themeName;
         this.themeSlug = themeSlug;
-        this.themeFolder = processSlug + "_" + themeSlug;
+        this.themeId = processSlug + "_" + themeSlug;
     }
 
     getName() {
         return this.themeName;
     }
 
-    getFolder() {
-        return this.themeFolder;
+    getId() {
+        return this.themeId;
     }
 
     getSlug() {

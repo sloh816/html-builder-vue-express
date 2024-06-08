@@ -8,7 +8,7 @@ const upload = multer({
 	dest: "./db/temp/"
 });
 
-class handleWordToHtml {
+class WordToHtmlHandler {
 
     constructor() {
         this.router = express.Router();
@@ -34,10 +34,11 @@ class handleWordToHtml {
         const tempWordFilePath = req.file.path + ".docx";
         const wordFile = req.file.originalname;
         const wordToHtml = new WordToHtml(tempWordFilePath, wordFile, theme);
+        wordToHtml.print();
 
         // run the process
         wordToHtml.runProcess();
     }
 }
 
-module.exports = handleWordToHtml;
+module.exports = WordToHtmlHandler;

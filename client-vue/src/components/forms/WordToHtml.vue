@@ -23,7 +23,7 @@ import SelectInput from "@/components/formComponents/SelectInput.vue";
 
 <script>
 import { sendWordToHtmlForm } from "@/server/post";
-import { getThemes } from "@/server/get";
+import { getData } from "@/server/get";
 
 export default {
 	name: "wordToHtml",
@@ -39,12 +39,13 @@ export default {
 	},
 
     async created() {
-        const themes = await getThemes();
+        const themes = await getData("themes");
+        console.log(themes);
         themes.forEach( (theme) => {
             this.themeOptions.push({
-                name: theme.themeName,
-                value: theme.themeName,
-                key: theme.themeSlug
+                name: theme.name,
+                value: theme.name,
+                key: theme.slug
             })
         })
     },

@@ -2,38 +2,21 @@ import axios from "axios";
 
 export const server_url = "http://localhost:3000";
 
-export async function getProcesses() {
-	try {
-		const response = await axios.get(`/api/processes`);
-		return response.data;
-	} catch (error) {
-		console.error("🔴 Error getting processes:", error);
-	}
-}
-
-export async function getThemes() {
+export async function getData(databaseFolder) {
     try {
-        const response = await axios.get(`/api/themes`);
+        const response = await axios.get(`/api/${databaseFolder}`);
         return response.data;
-    } catch {
-        console.error("🔴 Error getting themes:", error);
-    }
-}
-
-export async function getThemeInfo(folder) {
-    try {
-        const themes = await getThemes();
-        return themes.filter( theme => theme.folder === folder )[0]
     } catch (error) {
-        console.error("🔴 Error getting theme info:", error);
+        console.error("🔴 Error getting data:", error);
     }
 }
 
-export async function getPublications() {
+export async function getDataById(databaseFolder, id) {
     try {
-        const response = await axios.get(`/api/publications`);
-        return response.data;
-    } catch {
-        console.error("🔴 Error getting publications:", error);
+        const data = await getData(databaseFolder)
+        return data.filter( item => item.id === id )[0]
+    } catch (error) {
+        console.error("🔴 Error getting data by id:", error);
     }
+
 }

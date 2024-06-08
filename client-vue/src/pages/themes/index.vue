@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { getThemes } from "@/server/get";
+import { getData } from "@/server/get";
 
 export default {
     data() {
@@ -18,7 +18,7 @@ export default {
     },
 
     async created() {
-        this.themes = await getThemes();
+        this.themes = await getData("themes");
     },
 };
 </script>

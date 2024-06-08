@@ -3,14 +3,15 @@
 const express = require("express");
 const cors = require("cors");
 
-const WordToHtmlHandler = require("./controllers/handleWordToHtml");
+const WordToHtmlHandler = require("./controllers/wordToHtmlHandler");
 const { createPublicationsFolder } = require("./utils/fileSystem");
-const Info = require("./views/info");
+const Data = require("./views/data");
 
 class Server {
 
     constructor() {
         this.app = express();
+        this.dbFolders = ["processes", "themes", "publications"]
         this.config();
         this.routes();
     }
@@ -22,14 +23,10 @@ class Server {
 
     routes() {
         // servers
-        const processes = new Info("processes")
-        this.app.use(processes.router)
-
-        const themes = new Info("themes")
-        this.app.use(themes.router)
-
-        const publications = new Info("publications")
-        this.app.use(publications.router)
+        for (let folder of this.dbFolders) {
+            const data = new Data(folder)
+            this.app.use(data.router)
+        }
 
         // handlers
         const wordToHtmlHandler = new WordToHtmlHandler();

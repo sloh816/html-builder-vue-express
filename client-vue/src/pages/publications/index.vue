@@ -8,16 +8,16 @@ import Button from "@/components/Button.vue";
 		<li v-for="(publication, index) in publications" :key="index">
 			<span class="date">{{ publication.date }}</span>
 			<span class="time">{{ publication.time }}</span>
-			<span class="name">{{ publication.folder }}</span>
+			<span class="name">{{ publication.id }}</span>
 			<div class="buttons">
-				<Button class="secondary text-small" :href="`/publications/${publication.folder}/preview`">Preview</Button>
+				<Button class="secondary text-small" :href="`/publications/${publication.id}/preview`">Preview</Button>
 			</div>
 		</li>
 	</ul>
 </template>
 
 <script>
-import { getPublications } from "@/server/get";
+import { getData } from "@/server/get";
 
 export default {
 	name: "PublicationsView",
@@ -29,7 +29,7 @@ export default {
 	},
 
 	async created() {
-		this.publications = await getPublications();
+		this.publications = await getData("publications");
 		this.publications = this.publications.reverse();
 	}
 };

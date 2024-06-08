@@ -31,7 +31,7 @@ import Accordion from "@/components/Accordion.vue";
 </template>
 
 <script>
-import { getThemeInfo } from "@/server/get";
+import { getDataById } from "@/server/get";
 // import { sendEditThemeForm } from "@/server/post";
 
 export default {
@@ -50,7 +50,7 @@ export default {
 	},
 
 	async created() {
-		this.themeInfo = await getThemeInfo(`${this.process}_${this.theme}`)
+		this.themeInfo = await getDataById("themes", `${this.process}_${this.theme}`)
         this.styleMap = this.themeInfo.styleMap
 	},
 

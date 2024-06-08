@@ -1,4 +1,3 @@
-const Process = require('./process');
 const { getTimestamp, slugify, formatDate, formatTime } = require('../utils/functions');
 const { createFolder, copyFile, deleteFile, writeFile, readFile } = require('../utils/fileSystem');
 const { writeImageFiles } = require("../utils/writeImageFiles.js");
@@ -7,10 +6,11 @@ const mammoth = require('mammoth');
 const cheerio = require('cheerio');
 
 
-class WordToHtml extends Process {
+class WordToHtml {
 
     constructor(tempWordFilePath, wordFile, theme) {
-        super("Word to HTML", "word-to-html");
+        this.name = "Word to HTML";
+        this.slug = "word-to-html";
         this.tempWordFilePath = tempWordFilePath;
         this.wordFile = wordFile;
         this.theme = theme;
@@ -19,7 +19,7 @@ class WordToHtml extends Process {
 
     print() {
         console.log("⬜ Word to HTML object created !")
-        console.log({name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile, theme: this.theme.getSlug()});
+        console.log({name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile, theme: this.theme.getId()});
     }
 
     getName() {
@@ -52,25 +52,24 @@ class WordToHtml extends Process {
 		const outputFolderPath = await createFolder(`${newJobFolderPath}/output`);
 
         // create a publication object
-        const themeFolder = this.theme.getFolder();
+        const themeId = this.theme.getId();
 		const publicationObject = {
 			uploadedFileName: this.wordFileName,
 			date: formatDate(timestamp.split("_")[0]),
 			time: formatTime(timestamp.split("_")[1].replace(/-/g, ":")),
-			folder: newJobFolder,
 			processName: "Word to HTML",
-			themeFolder
+			themeId
 		};
 
-        // write object to a info.json file
+        // write object to a data.json file
 		await writeFile(
-			`${newJobFolderPath}/info.json`,
+			`${newJobFolderPath}/data.json`,
 			JSON.stringify(publicationObject, null, 4)
 		);
         
-        //get styleMap from theme.json
-		const themesFolder = `db/themes/${themeFolder}`;
-		const themeJsonFile = await readFile(`${themesFolder}/theme.json`, "json");
+        //get styleMap from data.json
+		const themesFolder = `db/themes/${themeId}`;
+		const themeJsonFile = await readFile(`${themesFolder}/data.json`, "json");
 		const themeJsonData = JSON.parse(themeJsonFile);
 		let styleMap = themeJsonData.styleMap;
 

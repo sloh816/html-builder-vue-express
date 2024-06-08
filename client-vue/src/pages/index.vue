@@ -15,7 +15,7 @@ import { RouterLink } from "vue-router";
 </template>
 
 <script>
-import { getProcesses } from "@/server/get";
+import { getData } from "@/server/get";
 
 export default {
 	data() {
@@ -25,7 +25,7 @@ export default {
 	},
 
 	async created() {
-		this.processes = await getProcesses();
+		this.processes = await getData("processes");
 	}
 };
 </script>
