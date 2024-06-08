@@ -8,7 +8,7 @@ import SelectInput from "@/components/formComponents/SelectInput.vue";
 	<form v-if="!isProcessing" enctype="multipart/form-data" @submit.prevent="sendForm" class="container">
 		<p v-if="errorMessage" class="message">{{ errorMessage }}</p>
 		<FileInput label="Upload a Word Document:" name="wordFile" @onFileUpload="handleFileUpload" />
-		<SelectInput :options="themeOptions" name="theme" />
+		<SelectInput :options="themeOptions" name="theme" label="Select a theme: " />
 		<Button class="primary text-m" type="submit">Submit</Button>
 	</form>
 	<div v-else-if="isProcessing" class="container process-messages">
@@ -38,17 +38,17 @@ export default {
 		};
 	},
 
-    async created() {
-        const themes = await getData("themes");
-        console.log(themes);
-        themes.forEach( (theme) => {
-            this.themeOptions.push({
-                name: theme.name,
-                value: theme.name,
-                key: theme.slug
-            })
-        })
-    },
+	async created() {
+		const themes = await getData("themes");
+		console.log(themes);
+		themes.forEach((theme) => {
+			this.themeOptions.push({
+				name: theme.name,
+				value: theme.name,
+				key: theme.slug
+			});
+		});
+	},
 
 	methods: {
 		handleFileUpload(file) {
@@ -64,8 +64,8 @@ export default {
 				formData.append("wordFile", this.wordFile);
 				formData.append("themeName", event.target.theme.value);
 
-                const themeSlug = this.themeOptions.find( (theme) => theme.name === event.target.theme.value).key;
-                formData.append("themeSlug", themeSlug);
+				const themeSlug = this.themeOptions.find((theme) => theme.name === event.target.theme.value).key;
+				formData.append("themeSlug", themeSlug);
 
 				this.errorMessage = "";
 				this.processSuccess = await sendWordToHtmlForm(formData);

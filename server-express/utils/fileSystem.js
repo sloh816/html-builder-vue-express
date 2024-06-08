@@ -47,14 +47,15 @@ function deleteFile(filePath) {
 }
 
 async function readFile(filePath) {
-    try {
-      const data = await fsp.readFile(filePath, 'utf8');
-      return data;
-    } catch (error) {
-      console.error(`Error reading file from path: ${filePath}`);
-      throw error;
-    }
-  }
+	try {
+		const absPath = path.resolve(filePath);
+		const data = await fsp.readFile(absPath, "utf8");
+		return data;
+	} catch (error) {
+		console.error(`Error reading file from path: ${filePath}`);
+		throw error;
+	}
+}
 
 async function getSubfolders(folderPath) {
 	console.log("🔃 Getting subfolders from..." + folderPath);
@@ -103,6 +104,18 @@ async function createPublicationsFolder() {
 	}
 }
 
+async function folderExists(folderPath) {
+	try {
+		const absPath = path.resolve(folderPath);
+		await fsp.access(absPath);
+		console.log(`✅ Folder exists: ${folderPath}`);
+		return true;
+	} catch (err) {
+		console.log(`⚠️ Folder does not exist: ${folderPath}`);
+		return false;
+	}
+}
+
 module.exports = {
 	createFolder,
 	copyFile,
@@ -111,5 +124,6 @@ module.exports = {
 	readFile,
 	createPublicationsFolder,
 	getSubfolders,
-	getFiles
+	getFiles,
+	folderExists
 };

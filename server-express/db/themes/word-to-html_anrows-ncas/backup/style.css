@@ -211,3 +211,7 @@
     list-style: circle;
     margin-left: 2rem;
 }
+
+body {
+  background: blue;
+}
