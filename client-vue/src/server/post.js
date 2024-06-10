@@ -13,7 +13,6 @@ export async function sendWordToHtmlForm(formData) {
 export async function sendEditThemeForm(updatedThemeData) {
 	try {
 		await axios.post("/api/edit-theme", updatedThemeData);
-		return "Theme has been updated";
 	} catch (err) {
 		console.error(err);
 		return "something went wrong";

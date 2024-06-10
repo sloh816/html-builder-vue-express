@@ -9,7 +9,7 @@ import TextInput from "@/components/formComponents/TextInput.vue";
 	<h1 class="page-title">Edit theme</h1>
 	<div class="container">
 		<form @submit.prevent="sendThemeData">
-			<p><strong>Process:</strong> {{ process.name }}</p>
+			<p class="text-m"><strong>Process:</strong> {{ process.name }}</p>
 			<TextInput name="themeName" label="Theme name: " :value="data.name" />
 			<Accordion summary="Map Word styles to class names:" showButton="Show Style Map" hideButton="Hide Style Map">
 				<div class="style-map__inputs">
@@ -31,8 +31,8 @@ import TextInput from "@/components/formComponents/TextInput.vue";
 				>.
 			</Accordion>
 			<Button type="submit" class="primary text-m">Update theme</Button>
-			<p v-if="message" class="message message--green">{{ message }}</p>
 		</form>
+		<p v-if="message" class="message message--yellow">{{ this.message }}</p>
 	</div>
 </template>
 
@@ -50,11 +50,11 @@ export default {
 			data: {},
 			styleMap: [],
 			styleInputCount: 1,
-			message: "",
 			showStyleMap: false,
 			stylesheet: "",
 			process: {},
-			slug: this.theme
+			slug: this.theme,
+			message: ""
 		};
 	},
 
@@ -70,6 +70,8 @@ export default {
 			const slug = slugify(inputValue);
 			this.slug = slug;
 		});
+
+		console.log("page loaded !");
 	},
 
 	methods: {
@@ -136,7 +138,13 @@ export default {
 			const stylesheet = submitEvent.target.querySelector("textarea").value;
 			updatedThemeData.stylesheet = stylesheet;
 
-			this.message = await sendEditThemeForm(updatedThemeData);
+			await sendEditThemeForm(updatedThemeData);
+
+			this.message = "Updating theme...";
+
+			setTimeout(() => {
+				this.$router.push(`/themes/${this.id}/`);
+			}, 2000);
 		}
 	}
 };
@@ -161,14 +169,7 @@ export default {
 	resize: none;
 }
 
-.disabled-fields {
-	display: flex;
-	align-items: center;
-	gap: 4rem;
-
-	input {
-		border: none;
-		background: none;
-	}
+form {
+	margin-bottom: 2rem;
 }
 </style>
