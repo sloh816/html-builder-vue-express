@@ -28,3 +28,12 @@ export async function getThemeStylesheet(styleId) {
 		console.error("🔴 Error getting theme stylesheet:", error);
 	}
 }
+
+export async function getPublicationPreview(id) {
+	try {
+		const response = await axios.get(`/api/publication-preview`);
+		return response.data;
+	} catch (error) {
+		console.error("🔴 Error getting publication preview:", error);
+	}
+}

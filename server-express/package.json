@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev nodemon": "nodemon server.js",
+        "dev:watch": "nodemon server.js",
         "dev": "node server.js",
         "start": "pm2 start server.js --name html-builder-express",
         "restart": "pm2 restart html-builder-express",

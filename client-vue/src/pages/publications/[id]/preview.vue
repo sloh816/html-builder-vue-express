@@ -8,21 +8,22 @@ meta:
 </route>
 
 <script>
-import { getPublicationData, server_url } from "@/server/get";
+import { getPublicationPreview, server_url } from "@/server/get";
 
 export default {
 	name: "PublicationView",
-	props: ["publication"],
+	props: ["id"],
 
 	data() {
 		return {
 			publicationObject: {},
-			indexFile: server_url + "/" + this.publication + "/output/index.html"
+			indexFile: ""
 		};
 	},
 
 	async created() {
-		this.publicationObject = await getPublicationData(this.publication);
+		this.publicationObject = await getPublicationPreview(this.id);
+		console.log(this.publicationObject);
 	}
 };
 </script>

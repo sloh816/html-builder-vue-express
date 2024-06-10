@@ -7,7 +7,6 @@ const WordToHtmlHandler = require("./controllers/wordToHtmlHandler");
 const EditThemeHandler = require("./controllers/editThemeHandler");
 
 const { createPublicationsFolder, getSubfolders } = require("./utils/fileSystem");
-const eventEmitter = require("./utils/eventEmitter");
 
 const Data = require("./views/data");
 const ThemeStylesheet = require("./views/themeStylesheet");
@@ -20,7 +19,6 @@ class Server {
 		this.config();
 		this.serverRoutes();
 		this.handlerRoutes();
-		this.server = null;
 		this.portNumber = portNumber || 3000;
 		this.start(this.portNumber);
 	}
@@ -36,7 +34,7 @@ class Server {
 			this.app.use(data.router);
 		}
 
-		this.app.use("/api/publication-outputs", express.static("db/publications"));
+		this.app.use("/api/publication-preview", express.static("db/publications"));
 
 		this.themes = await getSubfolders("db/themes");
 		for (let folder of this.themes) {
@@ -54,32 +52,9 @@ class Server {
 	}
 
 	start(portNumber) {
-		this.server = this.app.listen(portNumber, () => {
+		this.app.listen(portNumber, () => {
 			console.log(`🟢 Server running on port ${portNumber}`);
 		});
-	}
-
-	stop() {
-		if (this.server) {
-			this.server.close();
-			console.log("🟥 Server stopped.");
-		}
-	}
-
-	restart() {
-		if (this.server) {
-			console.log("🟡 Restarting server...");
-
-			try {
-				this.server.close();
-				console.log("🟥 Server stopped.");
-				this.start(this.portNumber);
-			} catch (error) {
-				console.log("🟥 Error closing server:", error);
-			}
-		} else {
-			this.start(this.portNumber);
-		}
 	}
 }
 
