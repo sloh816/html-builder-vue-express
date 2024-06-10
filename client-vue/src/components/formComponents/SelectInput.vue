@@ -1,18 +1,29 @@
 <script setup>
 const props = defineProps(["options", "name", "label", "value"]);
-console.log(props);
 </script>
 
 <template>
 	<div class="input">
 		<label :for="name" class="label">{{ label }}</label>
-		<select :name="name">
+		<select :name="name" class="select">
 			<option v-for="option in options" :key="option.key" :value="option.value">{{ option.name }}</option>
 		</select>
 	</div>
 </template>
 
-<script></script>
+<script>
+export default {
+	mounted() {
+		const select = this.$el.querySelector("select");
+		const options = select.querySelectorAll("option");
+		options.forEach((option) => {
+			if (option.value === this.value) {
+				option.selected = true;
+			}
+		});
+	}
+};
+</script>
 
 <style scoped lang="scss">
 select {

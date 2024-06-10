@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const { copyFile, folderExists, createFolder, writeFile, readFile } = require("../utils/fileSystem");
+const { copyFile, folderExists, createFolder, writeFile, readFile, renameFolder } = require("../utils/fileSystem");
+const { restartServer } = require("../utils/pm2");
 
 class EditThemeHandler {
 	constructor() {
@@ -19,29 +20,28 @@ class EditThemeHandler {
 		console.log("🟡 Handling 'Edit Theme' formData");
 		const data = req.body;
 
-		// create styleMap from data
-		const styleMap = [];
-		for (const key in data) {
-			if (key.startsWith("styleMapItem-")) {
-				styleMap.push(data[key]);
-			}
-		}
+		// get styleMap
+		const styleMap = data.styleMap;
 
 		// get themeId
-		const themeId = data.themeId;
+		const themeId = data.id;
 
 		// create a backup of current themeFiles
 		await this.createBackup(themeId);
 
-		// update styleMap in data.json
+		// update styleMap and theme name in data.json
 		const dataJson = await readFile(`db/themes/${themeId}/data.json`);
 		const dataObject = JSON.parse(dataJson);
 		dataObject.styleMap = styleMap;
+		dataObject.name = data.name;
 		await writeFile(`db/themes/${themeId}/data.json`, JSON.stringify(dataObject, null, 4));
 
 		// update style.css
 		const stylesheet = data.stylesheet;
 		await writeFile(`db/themes/${themeId}/style.css`, stylesheet);
+
+		// restart the server
+		restartServer();
 	}
 
 	async createBackup(themeId) {

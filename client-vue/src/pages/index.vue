@@ -6,11 +6,11 @@ import { RouterLink } from "vue-router";
 	<h1 class="page-title">What would you like to do?</h1>
 	<ul>
 		<li v-for="process in processes">
-			<RouterLink :to="`/process/${process.slug}`">{{ process.name }}</RouterLink>
+			<RouterLink :to="`/process/${process.id}`">{{ process.name }}</RouterLink>
 		</li>
-        <li>
-            <RouterLink to="/">Checklists</RouterLink>
-        </li>
+		<li>
+			<RouterLink to="/">Checklists</RouterLink>
+		</li>
 	</ul>
 </template>
 

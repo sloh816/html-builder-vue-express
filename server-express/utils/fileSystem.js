@@ -24,6 +24,43 @@ async function copyFile(sourcePath, destinationPath) {
 	}
 }
 
+async function copyFolder(sourceFolder, targetFolder) {
+	console.log("🔃 Copying folder from..." + sourceFolder + " to " + targetFolder);
+	try {
+		// Ensure the target directory exists
+		await fsp.mkdir(targetFolder, { recursive: true });
+
+		// Read the contents of the source directory
+		const entries = await fsp.readdir(sourceFolder, { withFileTypes: true });
+
+		// Iterate over each entry in the source directory
+		for (let entry of entries) {
+			const sourcePath = path.join(sourceFolder, entry.name);
+			const targetPath = path.join(targetFolder, entry.name);
+
+			if (entry.isDirectory()) {
+				// If the entry is a directory, recursively copy it
+				await copyFolder(sourcePath, targetPath);
+			} else {
+				// If the entry is a file, copy it
+				await fsp.copyFile(sourcePath, targetPath);
+			}
+		}
+	} catch (err) {
+		console.error("🔴 Error copying folder:", err);
+	}
+}
+
+async function renameFolder(oldPath, newPath) {
+	console.log("🔃 Renaming folder from..." + oldPath + " to " + newPath);
+	try {
+		await fsp.rename(oldPath, newPath);
+		console.log("✅ Folder renamed successfully:", newPath);
+	} catch (err) {
+		console.error("🔴 Error renaming folder:", err);
+	}
+}
+
 function writeFile(filePath, fileData) {
 	console.log("🔃 Writing file to..." + filePath);
 	const fullFilePath = path.resolve(filePath);
@@ -125,5 +162,7 @@ module.exports = {
 	createPublicationsFolder,
 	getSubfolders,
 	getFiles,
-	folderExists
+	folderExists,
+	copyFolder,
+	renameFolder
 };

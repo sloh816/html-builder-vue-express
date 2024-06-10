@@ -1,7 +1,6 @@
 {
-    "name": "ANROWS NCAS",
-    "slug": "anrows-ncas",
-    "processSlug": "word-to-html",
+    "name": "ANROWS NCAS2",
+    "processId": "word-to-html",
     "styleMap": [
         "p[style-name='Cover title'] => h1.cover-title:fresh",
         "p[style-name='Cover subtitle'] => p.cover-subtitle:fresh",

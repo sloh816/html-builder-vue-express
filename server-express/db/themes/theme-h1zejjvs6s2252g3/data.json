@@ -1,7 +1,6 @@
 {
     "name": "ANROWS",
-    "slug": "anrows",
-    "processSlug": "word-to-html",
+    "processId": "word-to-html",
     "styleMap": [
         "p[style-name='Cover title'] => h1.cover-title:fresh",
         "p[style-name='Cover subtitle'] => p.cover-subtitle:fresh",

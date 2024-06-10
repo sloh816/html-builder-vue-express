@@ -6,28 +6,27 @@ import WordToHtmlER from "@/components/forms/WordToHtmlER.vue";
 
 <template>
 	<h1 class="page-title">{{ process.name }}</h1>
-	<WordToHtml v-if="slug === 'word-to-html'" />
-	<InDesignToHtml v-if="slug === 'indesign-to-html'" />
-    <WordToHtmlER v-if="slug === 'word-to-html-easy-read'" />
+	<WordToHtml v-if="id === 'word-to-html'" />
+	<InDesignToHtml v-if="id === 'indesign-to-html'" />
+	<WordToHtmlER v-if="id === 'word-to-html-easy-read'" />
 </template>
 
 <script>
 import { getDataById } from "@/server/get";
 
 export default {
-	props: ["slug"],
+	props: ["id"],
 
 	data() {
 		return {
 			process: {
-                name: '',
-                slug: ''
-            }
+				name: ""
+			}
 		};
 	},
 
-    async created() {
-        this.process = await getDataById("processes", this.slug)
-    }
+	async created() {
+		this.process = await getDataById("processes", this.id);
+	}
 };
 </script>

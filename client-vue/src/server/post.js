@@ -10,10 +10,9 @@ export async function sendWordToHtmlForm(formData) {
 	}
 }
 
-export async function sendEditThemeForm(formData) {
+export async function sendEditThemeForm(updatedThemeData) {
 	try {
-		const formDataAsJson = Object.fromEntries(formData);
-		await axios.post("/api/edit-theme", formDataAsJson);
+		await axios.post("/api/edit-theme", updatedThemeData);
 		return "Theme has been updated";
 	} catch (err) {
 		console.error(err);

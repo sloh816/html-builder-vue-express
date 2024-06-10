@@ -1,24 +1,24 @@
 <template>
-    <h1 class="page-title">Themes</h1>
-    <ul>
-        <li v-for="(theme, index) in themes" :key="index">
-            <a :href="`/themes/${theme.processSlug}/${theme.slug}/edit`">{{ theme.name }}</a>
-        </li>
-    </ul>
+	<h1 class="page-title">Themes</h1>
+	<ul>
+		<li v-for="(theme, index) in themes" :key="index">
+			<a :href="`/themes/${theme.id}/edit`">{{ theme.name }}</a>
+		</li>
+	</ul>
 </template>
 
 <script>
 import { getData } from "@/server/get";
 
 export default {
-    data() {
-        return {
-            themes: [],
-        };
-    },
+	data() {
+		return {
+			themes: []
+		};
+	},
 
-    async created() {
-        this.themes = await getData("themes");
-    },
+	async created() {
+		this.themes = await getData("themes");
+	}
 };
 </script>
