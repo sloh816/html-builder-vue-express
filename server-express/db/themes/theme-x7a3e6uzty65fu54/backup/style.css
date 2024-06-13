@@ -1,0 +1,218 @@
+.html-content {
+	font-family: "AvenirBook";
+	line-height: 1.6;
+	font-size: 16px;
+}
+.html-content :is(p, h2, h3, h4, h5) {
+	margin: 0;
+	font-family: "AvenirBook";
+}
+.html-content img {
+	max-width: 100%;
+}
+.html-content h1.cover-title {
+	font-family: MinionPro;
+	font-size: 70px;
+	font-weight: normal;
+	line-height: 1;
+	margin-top: 0;
+}
+.html-content .detail-heading,
+.html-content .detail-body {
+	font-size: 0.9rem;
+	margin: 0.5rem 0;
+}
+.html-content .detail-heading {
+	font-weight: bold;
+	margin-top: 1rem;
+}
+.html-content h2.researcher-heading,
+.html-content h2 {
+	font-size: 1.2rem;
+	margin-top: 2rem;
+	margin-bottom: 0.5em;
+}
+.html-content .researcher-name {
+	font-weight: bold;
+	font-size: 1rem;
+}
+.html-content .researcher-title {
+	margin-bottom: 1rem;
+	font-size: 1rem;
+}
+.html-content .two-columns {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	margin: 2rem 0;
+	gap: 2rem;
+}
+.html-content .two-columns img {
+	max-width: 250px;
+	margin-bottom: 2rem;
+}
+.html-content h2.section-title,
+#footnotes h2 {
+	font-size: 2.5rem;
+	font-weight: bold;
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+	line-height: 1.25;
+}
+.html-content .toc-2 a {
+	color: black;
+	background: #fad03c;
+	display: block;
+	text-decoration: none;
+	font-weight: bold;
+	padding: 4px 8px;
+	margin: 0.5rem 0;
+}
+.html-content .toc-2 a {
+	border: none !important;
+}
+.html-content .toc-3 a {
+	text-decoration: none;
+	color: black;
+	margin-left: 2rem;
+	border: none !important;
+}
+.html-content .toc-2 a:hover,
+.html-content .toc-3 a:hover {
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+.html-content h3.heading-3 {
+	background: #fad03c;
+	padding: 1rem 2rem;
+	margin: 0.5rem 0;
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-top: 2em;
+}
+.html-content table.key-definitions {
+	width: 100%;
+	border-collapse: collapse;
+}
+.html-content table.key-definitions th {
+	background: #fad03c;
+	padding: 8px 10px;
+	text-align: left;
+}
+.html-content table.key-definitions td {
+	padding: 8px 10px;
+	border-bottom: 1px solid #fad03c;
+	font-size: 0.9rem;
+}
+.html-content table.key-definitions td:nth-child(1) {
+	font-weight: bold;
+}
+.html-content p.body-medium {
+	font-size: 1.2rem;
+	margin: 1rem 0;
+}
+.html-content p.body-text {
+	margin: 1rem 0;
+}
+.html-content .body-medium-border-top,
+.html-content .body-large {
+	font-weight: bold;
+	border-top: 10px dashed #fad03c;
+	padding-top: 8px;
+	margin-top: 3rem;
+	font-size: 1.2rem;
+}
+.html-content .body-large {
+	font-weight: normal;
+}
+.html-content .list-item-body-medium {
+	font-size: 1.2rem;
+}
+.html-content h4.heading-4 {
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin: 1rem 0;
+}
+.html-content .figure-table-note {
+	font-size: 0.8rem;
+	margin-top: 1em;
+}
+.html-content .callout-box-border-left {
+	border-left: 10px #fad03c dashed;
+	padding-left: 2rem;
+	margin-bottom: 2rem;
+}
+.html-content .callout-box-border-left .body-large {
+	border-top: none;
+}
+.html-content .callout-box-subtitle {
+	border-top: 10px dashed #fad03c;
+	margin-top: 3em;
+	padding-top: 8px;
+}
+.html-content .callout-box-heading-large {
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+.html-content table.ncas-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 1rem;
+}
+.html-content table.ncas-table th {
+	background: #fad03c;
+	padding: 8px 10px;
+}
+.html-content table.ncas-table td {
+	border-bottom: 1px solid #fad03c;
+	padding: 8px 10px;
+}
+.html-content table.ncas-table td:nth-child(1) {
+	font-weight: bold;
+}
+.html-content .table-subheading {
+	font-size: 1.1rem;
+	font-weight: bold;
+	margin-top: 2em;
+}
+.html-content h4.heading-4-grey {
+	background: #e7e6e6;
+	padding: 0.5rem 1rem;
+	margin: 1rem 0;
+	font-size: 1rem;
+}
+.html-content h5.heading-5-large {
+	font-size: 1rem;
+	color: black;
+	text-transform: initial;
+	letter-spacing: normal;
+}
+.html-content .reference {
+	font-size: 0.9rem;
+	text-indent: -1.5rem;
+	margin-left: 1.5rem;
+	word-wrap: break-word;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+.html-content .reference a {
+	word-wrap: break-word;
+}
+.html-content #footnotes li {
+	margin: 1rem 0;
+}
+.html-content img.img_small {
+	width: 120px;
+}
+.html-content li:has(ul) {
+	list-style: none;
+}
+.html-content li.body-bullet-2 {
+	list-style: circle;
+	margin-left: 2rem;
+}
+
+body {
+	background: blue;
+}

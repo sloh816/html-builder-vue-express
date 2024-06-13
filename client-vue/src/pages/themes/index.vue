@@ -1,10 +1,13 @@
 <template>
 	<h1 class="page-title">Themes</h1>
-	<ul>
-		<li v-for="(theme, index) in themes" :key="index">
-			<a :href="`/themes/${theme.id}/edit`">{{ theme.name }}</a>
-		</li>
-	</ul>
+	<div v-for="process in processes" :key="process.id" :id="process.id">
+		<h2>{{ process.name }}</h2>
+		<ul>
+			<li v-for="(theme, index) in themes[process.id]">
+				<a :href="`/themes/${theme.id}/edit`">{{ theme.name }}</a>
+			</li>
+		</ul>
+	</div>
 </template>
 
 <script>
@@ -13,12 +16,18 @@ import { getData } from "@/server/get";
 export default {
 	data() {
 		return {
-			themes: []
+			themes: {},
+			processes: []
 		};
 	},
 
 	async created() {
-		this.themes = await getData("themes");
+		const allThemes = await getData("themes");
+		this.processes = await getData("processes");
+		for (let i = 0; i < this.processes.length; i++) {
+			const process = this.processes[i];
+			this.themes[process.id] = allThemes.filter((theme) => theme.processId === process.id);
+		}
 	}
 };
 </script>
