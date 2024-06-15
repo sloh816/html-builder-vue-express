@@ -5,7 +5,9 @@ export const server_url = "http://localhost:3000";
 export async function getData(databaseFolder) {
 	try {
 		const response = await axios.get(`/api/${databaseFolder}`);
-		return response.data;
+		const data = response.data;
+		data.sort((a, b) => a.id - b.id);
+		return data;
 	} catch (error) {
 		console.error("🔴 Error getting data:", error);
 	}
@@ -32,6 +34,7 @@ export async function getThemeStylesheet(styleId) {
 export async function getPublicationPreview(id) {
 	try {
 		const response = await axios.get(`/api/publication-preview`);
+		console.log(response.data);
 		return response.data;
 	} catch (error) {
 		console.error("🔴 Error getting publication preview:", error);

@@ -8,7 +8,6 @@ class Data {
 		this.databaseFolder = databaseFolder;
 		this.data = [];
 		this.loadData();
-
 		this.router = express.Router();
 		this.routes();
 	}

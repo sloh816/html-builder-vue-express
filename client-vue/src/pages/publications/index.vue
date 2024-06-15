@@ -10,6 +10,7 @@ import Button from "@/components/Button.vue";
 			<span class="time">{{ publication.time }}</span>
 			<span class="name">{{ publication.id }}</span>
 			<div class="buttons">
+				<Button class="tertiary text-small" :href="`/publications/${publication.id}`">View details</Button>
 				<Button class="secondary text-small" :href="`/publications/${publication.id}/preview`">Preview</Button>
 			</div>
 		</li>
@@ -30,7 +31,7 @@ export default {
 
 	async created() {
 		this.publications = await getData("publications");
-		this.publications = this.publications.reverse();
+		this.publications.reverse();
 	}
 };
 </script>
@@ -56,6 +57,11 @@ ul {
 
 		.name {
 			flex-grow: 1;
+		}
+
+		.buttons {
+			display: flex;
+			gap: 0.5rem;
 		}
 	}
 }
