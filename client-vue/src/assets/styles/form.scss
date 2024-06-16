@@ -1,0 +1,28 @@
+form {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+
+	label,
+	.label {
+		font-weight: bold;
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	input[type="text"],
+	select {
+		padding: 0.6rem;
+		border: 2px solid var(--slate-800);
+		border-radius: 0.6rem;
+		width: 100%;
+	}
+
+	select {
+		cursor: pointer;
+	}
+
+	button[type="submit"] {
+		margin-top: 2rem;
+	}
+}

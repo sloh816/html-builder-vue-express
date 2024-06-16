@@ -1,10 +1,18 @@
+<script setup>
+import Button from "@/components/Button.vue";
+</script>
+
 <template>
 	<h1 class="page-title">Themes</h1>
 	<div v-for="process in processes" :key="process.id" :id="process.id">
 		<h2>{{ process.name }}</h2>
 		<ul>
 			<li v-for="(theme, index) in themes[process.id]">
-				<a :href="`/themes/${theme.id}/edit`">{{ theme.name }}</a>
+				<span class="name">{{ theme.name }}</span>
+				<span class="id">ID: {{ theme.id }}</span>
+				<div class="buttons">
+					<Button :href="`/themes/${theme.id}/edit`" class="secondary text-sm">Edit theme</Button>
+				</div>
 			</li>
 		</ul>
 	</div>
@@ -31,3 +39,35 @@ export default {
 	}
 };
 </script>
+
+<style lang="scss" scoped>
+ul {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin: 0;
+	padding: 0;
+
+	li {
+		display: flex;
+		gap: 1rem;
+		background: white;
+		padding: 10px 10px 10px 24px;
+		border-radius: 1rem;
+		align-items: center;
+	}
+
+	.name,
+	.id {
+		flex-basis: 200px;
+	}
+
+	.name {
+		font-weight: bold;
+	}
+
+	.id {
+		flex-grow: 1;
+	}
+}
+</style>

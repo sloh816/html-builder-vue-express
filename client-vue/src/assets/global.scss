@@ -1,5 +1,4 @@
-@import "./styles/base.css";
-@import "./styles/text-size.css";
+@import "./styles/reset.scss";
 
 :root {
 	--slate-100: #f8fafc;
@@ -18,68 +17,14 @@ body {
 	color: var(--slate-800);
 	font-family: "proxima-nova", sans-serif;
 
-	h1.page-title {
-		text-align: center;
-		margin-bottom: 3rem;
-	}
-
-	h2 {
-		margin-bottom: 1rem;
-		margin-top: 1em;
-	}
-
-	a,
-	a:visited {
-		color: inherit;
-	}
-
-	:focus-visible {
-		outline: 2px solid var(--orange);
-		outline-offset: 4px;
+	.container {
+		background: white;
+		padding: 4rem;
+		border-radius: 1.6rem;
 	}
 }
 
-.container {
-	background: white;
-	padding: 4rem;
-	border-radius: 1.6rem;
-}
-
-form {
-	display: flex;
-	flex-direction: column;
-	gap: 2rem;
-
-	.label {
-		font-weight: bold;
-		display: block;
-		font-size: 1.1rem;
-		margin-bottom: 0.5rem;
-	}
-
-	button[type="submit"] {
-		margin-top: 2rem;
-	}
-}
-
-p.message {
-	background: var(--light-orange);
-	padding: 1rem 2rem;
-	border-radius: 0.6rem;
-	border-left: 4px solid var(--orange);
-
-	&--yellow {
-		background: #fef3c7;
-		border-left: 4px solid #f59e0b;
-	}
-
-	&--red {
-		background: #fee2e2;
-		border-left: 4px solid #ef4444;
-	}
-
-	&--green {
-		background: var(--light-green);
-		border-left: 4px solid var(--green);
-	}
-}
+@import "./styles/headings.scss";
+@import "./styles/text-styles.scss";
+@import "./styles/text-size.scss";
+@import "./styles/form.scss";
