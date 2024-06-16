@@ -15,10 +15,14 @@ class Data {
 	async loadData() {
 		const subFolders = await getSubfolders(`db/${this.databaseFolder}`);
 		subFolders.forEach(async (folder) => {
-			const data = await readFile(`db/${this.databaseFolder}/${folder}/data.json`);
-			const jsonData = JSON.parse(data);
-			jsonData.id = folder;
-			this.data.push(jsonData);
+			try {
+				const data = await readFile(`db/${this.databaseFolder}/${folder}/data.json`);
+				const jsonData = JSON.parse(data);
+				jsonData.id = folder;
+				this.data.push(jsonData);
+			} catch (error) {
+				console.error("❌ Error parsing JSON data", error);
+			}
 		});
 	}
 

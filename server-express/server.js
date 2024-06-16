@@ -15,7 +15,6 @@ class Server {
 	constructor(portNumber) {
 		this.app = express();
 		this.dbFolders = ["processes", "themes", "publications"];
-		this.themes = [];
 		this.config();
 		this.serverRoutes();
 		this.handlerRoutes();
@@ -36,8 +35,8 @@ class Server {
 
 		this.app.use("/api/publication-preview", express.static("db/publications"));
 
-		this.themes = await getSubfolders("db/themes");
-		for (let folder of this.themes) {
+		const themes = await getSubfolders("db/themes");
+		for (let folder of themes) {
 			const themeStylesheet = new ThemeStylesheet(folder);
 			this.app.use(themeStylesheet.router);
 		}

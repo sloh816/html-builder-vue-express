@@ -18,7 +18,7 @@ const classes = `button ${props.class}`;
 	transition: 0.3s;
 	border: none;
 	cursor: pointer;
-	display: block;
+	display: inline-block;
 	margin: 0 auto;
 	border: 2px solid var(--orange);
 	text-decoration: none;
@@ -42,7 +42,7 @@ const classes = `button ${props.class}`;
 		font-size: 1.1rem;
 	}
 
-	&.text-small {
+	&.text-sm {
 		font-size: 0.9rem;
 	}
 

@@ -8,7 +8,7 @@ meta:
 </route>
 
 <script>
-import { getPublicationPreview, server_url } from "@/server/get";
+import { getPublicationPreview } from "@/server/get";
 
 export default {
 	name: "PublicationView",
@@ -16,14 +16,12 @@ export default {
 
 	data() {
 		return {
-			publicationObject: {},
 			indexFile: ""
 		};
 	},
 
 	async created() {
-		this.publicationObject = await getPublicationPreview(this.id);
-		console.log(this.publicationObject);
+		this.indexFile = await getPublicationPreview(this.id);
 	}
 };
 </script>

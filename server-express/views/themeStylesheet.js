@@ -12,8 +12,12 @@ class ThemeStylesheets {
 	}
 
 	async getStylesheetData() {
-		const data = await readFile(`db/themes/${this.styleId}/style.css`);
-		this.stylecss = data;
+		try {
+			const data = await readFile(`db/themes/${this.styleId}/style.css`);
+			this.stylecss = data;
+		} catch (error) {
+			console.error("❌ Error reading style.css file", error);
+		}
 	}
 
 	routes() {

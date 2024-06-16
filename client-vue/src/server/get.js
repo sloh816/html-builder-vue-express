@@ -33,9 +33,8 @@ export async function getThemeStylesheet(styleId) {
 
 export async function getPublicationPreview(id) {
 	try {
-		const response = await axios.get(`/api/publication-preview`);
-		console.log(response.data);
-		return response.data;
+		const outputIndexFile = `${server_url}/api/publication-preview/${id}/output/index.html`;
+		return outputIndexFile;
 	} catch (error) {
 		console.error("🔴 Error getting publication preview:", error);
 	}

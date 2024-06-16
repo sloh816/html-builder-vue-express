@@ -10,8 +10,8 @@ import Button from "@/components/Button.vue";
 			<span class="time">{{ publication.time }}</span>
 			<span class="name">{{ publication.id }}</span>
 			<div class="buttons">
-				<Button class="tertiary text-small" :href="`/publications/${publication.id}`">View details</Button>
-				<Button class="secondary text-small" :href="`/publications/${publication.id}/preview`">Preview</Button>
+				<Button class="tertiary text-sm" :href="`/publications/${publication.id}`">View details</Button>
+				<Button class="secondary text-sm" :href="`/publications/${publication.id}/preview`">View HTML</Button>
 			</div>
 		</li>
 	</ul>

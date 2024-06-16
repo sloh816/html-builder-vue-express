@@ -9,7 +9,7 @@ async function createFolder(folderPath) {
 		console.log("✅ Folder created successfully:", folderPath);
 		return folderPath;
 	} catch (err) {
-		console.error("🔴 Error creating folder:", err);
+		console.error("❌ Error creating folder:", err);
 	}
 }
 
@@ -20,7 +20,7 @@ async function copyFile(sourcePath, destinationPath) {
 		console.log("✅ File copied successfully:", destinationPath);
 		return destinationPath;
 	} catch (err) {
-		console.error("🔴 Error copying file:", err);
+		console.error("❌ Error copying file:", err);
 	}
 }
 
@@ -47,7 +47,7 @@ async function copyFolder(sourceFolder, targetFolder) {
 			}
 		}
 	} catch (err) {
-		console.error("🔴 Error copying folder:", err);
+		console.error("❌ Error copying folder:", err);
 	}
 }
 
@@ -57,7 +57,7 @@ async function renameFolder(oldPath, newPath) {
 		await fsp.rename(oldPath, newPath);
 		console.log("✅ Folder renamed successfully:", newPath);
 	} catch (err) {
-		console.error("🔴 Error renaming folder:", err);
+		console.error("❌ Error renaming folder:", err);
 	}
 }
 
@@ -69,7 +69,7 @@ function writeFile(filePath, fileData) {
 		console.log("✅ File written successfully:", filePath);
 		return filePath;
 	} catch (err) {
-		console.error("🔴 Error writing file:", err);
+		console.error("❌ Error writing file:", err);
 	}
 }
 
@@ -79,7 +79,7 @@ function deleteFile(filePath) {
 		fs.unlinkSync(filePath);
 		console.log(`✅ File deleted successfully:"`, filePath);
 	} catch (error) {
-		console.error("🔴 Error deleting file:", err);
+		console.error("❌ Error deleting file:", err);
 	}
 }
 
@@ -89,7 +89,7 @@ async function readFile(filePath) {
 		const data = await fsp.readFile(absPath, "utf8");
 		return data;
 	} catch (error) {
-		console.error(`Error reading file from path: ${filePath}`);
+		console.error(`❌ Error reading file from path: ${filePath}`);
 		throw error;
 	}
 }
@@ -115,7 +115,7 @@ async function getSubfolders(folderPath) {
 		// Filter out undefined values (non-folders)
 		return subfolders.filter(Boolean);
 	} catch (err) {
-		throw new Error(`🔴 Error getting subfolders: ${err}`);
+		throw new Error(`❌ Error getting subfolders: ${err}`);
 	}
 }
 
@@ -127,7 +127,7 @@ async function getFiles(folderPath) {
 		const files = await fsp.readdir(fullFolderPath);
 		return files;
 	} catch (err) {
-		throw new Error(`🔴 Error getting files: ${err}`);
+		throw new Error(`❌ Error getting files: ${err}`);
 	}
 }
 

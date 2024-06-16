@@ -1,5 +1,6 @@
 <script setup>
 import DataDisplay from "@/components/DataDisplay.vue";
+import Button from "@/components/Button.vue";
 </script>
 
 <template>
@@ -10,11 +11,12 @@ import DataDisplay from "@/components/DataDisplay.vue";
 			<p>{{ publicationId }}</p>
 		</div>
 		<DataDisplay :data="publicationData" flex="flex-row" />
+		<Button :href="`/publications/${id}/preview`" class="secondary">View HTML</Button>
 	</div>
 </template>
 
 <script>
-import { getDataById, getData } from "@/server/get";
+import { getDataById } from "@/server/get";
 export default {
 	props: ["id"],
 
@@ -29,7 +31,9 @@ export default {
 		const publicationData = await getDataById("publications", `${this.id}`);
 		const themeData = await getDataById("themes", publicationData.themeId);
 		const processData = await getDataById("processes", publicationData.processId);
+
 		this.publicationId = publicationData.id;
+
 		this.publicationData = {
 			"Date created": publicationData.date,
 			"Time created": publicationData.time,

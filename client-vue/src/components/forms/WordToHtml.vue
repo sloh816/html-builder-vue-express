@@ -40,8 +40,8 @@ export default {
 
 	async created() {
 		const themes = await getData("themes");
-		console.log(themes);
-		themes.forEach((theme) => {
+		const wordToHtmlThemes = themes.filter((theme) => theme.processId === "word-to-html");
+		wordToHtmlThemes.forEach((theme) => {
 			this.themeOptions.push({
 				name: theme.name,
 				value: theme.name,

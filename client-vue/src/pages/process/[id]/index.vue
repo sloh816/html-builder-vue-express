@@ -1,14 +1,14 @@
 <script setup>
 import WordToHtml from "@/components/forms/WordToHtml.vue";
 import InDesignToHtml from "@/components/forms/InDesignToHtml.vue";
-import WordToHtmlER from "@/components/forms/WordToHtmlER.vue";
+import WordToHtmlER from "@/components/forms/EasyReadWordToHtml.vue";
 </script>
 
 <template>
 	<h1 class="page-title">{{ process.name }}</h1>
 	<WordToHtml v-if="id === 'word-to-html'" />
 	<InDesignToHtml v-if="id === 'indesign-to-html'" />
-	<WordToHtmlER v-if="id === 'word-to-html-easy-read'" />
+	<WordToHtmlER v-if="id === 'easy-read-word-to-html'" />
 </template>
 
 <script>
