@@ -44,8 +44,8 @@ export default {
 		wordToHtmlThemes.forEach((theme) => {
 			this.themeOptions.push({
 				name: theme.name,
-				value: theme.name,
-				key: theme.slug
+				value: theme.id,
+				key: theme.id
 			});
 		});
 	},
@@ -62,10 +62,7 @@ export default {
 
 				const formData = new FormData();
 				formData.append("wordFile", this.wordFile);
-				formData.append("themeName", event.target.theme.value);
-
-				const themeSlug = this.themeOptions.find((theme) => theme.name === event.target.theme.value).key;
-				formData.append("themeSlug", themeSlug);
+				formData.append("themeId", event.target.theme.value);
 
 				this.errorMessage = "";
 				this.processSuccess = await sendWordToHtmlForm(formData);

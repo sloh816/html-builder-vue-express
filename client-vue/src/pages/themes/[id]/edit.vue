@@ -1,13 +1,10 @@
 <script setup>
-import WordToHtmlTheme from "@/components/forms/WordToHtmlTheme.vue";
+import DisplayThemeForms from "@/components/DisplayThemeForms.vue";
 </script>
 
 <template>
 	<h1 class="page-title">Edit theme</h1>
-	<div class="container">
-		<WordToHtmlTheme v-if="processId === 'word-to-html'" :themeId="id" />
-		<p v-else class="message message--red">No form created for this theme.</p>
-	</div>
+	<DisplayThemeForms action="edit" :processId="processId" :themeId="id" />
 </template>
 
 <script>

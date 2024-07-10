@@ -6,11 +6,13 @@ import Button from "@/components/Button.vue";
 	<h1 class="page-title">Themes</h1>
 	<div v-for="process in processes" :key="process.id" :id="process.id">
 		<h2>{{ process.name }}</h2>
+		<Button :href="`/themes/new?processId=${process.id}`">+ New {{ process.name }} Theme</Button>
 		<ul>
 			<li v-for="(theme, index) in themes[process.id]">
 				<span class="name">{{ theme.name }}</span>
 				<span class="id">ID: {{ theme.id }}</span>
 				<div class="buttons">
+					<Button :href="`/themes/${theme.id}`" class="tertiary text-sm">View theme</Button>
 					<Button :href="`/themes/${theme.id}/edit`" class="secondary text-sm">Edit theme</Button>
 				</div>
 			</li>
@@ -55,6 +57,11 @@ ul {
 		padding: 10px 10px 10px 24px;
 		border-radius: 1rem;
 		align-items: center;
+
+		.buttons {
+			display: flex;
+			gap: 1em;
+		}
 	}
 
 	.name,

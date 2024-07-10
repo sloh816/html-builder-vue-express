@@ -10,9 +10,9 @@ export async function sendWordToHtmlForm(formData) {
 	}
 }
 
-export async function sendEditThemeForm(updatedThemeData) {
+export async function sendThemeForm(themeData) {
 	try {
-		await axios.post("/api/edit-theme", updatedThemeData);
+		await axios.post("/api/handle-theme", themeData);
 	} catch (err) {
 		console.error(err);
 		return "something went wrong";

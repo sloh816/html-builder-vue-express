@@ -1,40 +1,33 @@
 <script setup>
-import TextInput from "@/components/formComponents/TextInput.vue";
-import Button from "@/components/Button.vue";
-import Accordion from "@/components/Accordion.vue";
-import DataDisplay from "@/components/DataDisplay.vue";
+import DataDisplay from "../DataDisplay.vue";
+import TextInput from "../formComponents/TextInput.vue";
 import StyleMapAccordion from "../formComponents/StyleMapAccordion.vue";
+import Button from "../Button.vue";
 </script>
 
 <template>
 	<form @submit.prevent="sendThemeData">
 		<DataDisplay :data="displayData" flex="flex-row" />
 		<TextInput name="themeName" label="Theme name: " :value="data.name" />
-
 		<StyleMapAccordion :styleMap="styleMap" />
-
-		<Accordion summary="Stylesheet:" showButton="Show stylesheet" hideButton="Hide stylesheet">
-			<textarea id="stylesheet" class="stylesheet">{{ stylesheet }}</textarea>
-		</Accordion>
-
 		<Button v-if="action === 'edit'" type="submit" class="primary text-m">Update theme</Button>
 		<Button v-else type="submit" class="primary text-m">Create new theme</Button>
 	</form>
 </template>
 
 <script>
+import { getDataById } from "@/server/get";
 import { sendThemeForm } from "@/server/post";
-import { getDataById, getThemeStylesheet } from "@/server/get";
 
 export default {
 	props: ["themeId", "action"],
 
 	data() {
 		return {
-			data: {},
 			process: {},
+			data: {},
 			styleMap: [],
-			stylesheet: "",
+			styleInputCount: 1,
 			displayData: {
 				"Theme ID": this.themeId
 			}
@@ -42,34 +35,24 @@ export default {
 	},
 
 	async created() {
-		this.process = await getDataById("processes", "word-to-html");
+		this.process = await getDataById("processes", "easy-read-word-to-html");
 		this.displayData["Process"] = this.process.name;
-
-		if (this.action === "edit") {
-			this.data = await getDataById("themes", `${this.themeId}`);
-			this.styleMap = this.data.styleMap;
-			this.stylesheet = await getThemeStylesheet(this.data.id);
-		} else if (this.action === "new") {
-		}
+		this.data = await getDataById("themes", this.themeId);
+		this.styleMap = this.data.styleMap;
 	},
 
 	methods: {
 		async sendThemeData(submitEvent) {
 			let newThemeData = {};
 
-			// add action to newThemeData
-			newThemeData.action = this.action;
-
-			// add id, name, and process to newThemeData
+			// add themeId to newThemeData
 			newThemeData.id = this.themeId;
-			newThemeData.processId = this.process.id;
+
+			// add themeName to newThemeData
 			const themeName = submitEvent.target.querySelector("[name='themeName']").value;
 			newThemeData.name = themeName;
 
-			// add options object to newThemeData
-			newThemeData.options = {};
-
-			// create styleMap object
+			// create styleMap
 			let styleMap = [];
 			const wordStyleInputs = submitEvent.target.querySelectorAll("[name^='sm-wordstyle']");
 			wordStyleInputs.forEach((input, index) => {
@@ -84,39 +67,21 @@ export default {
 				}
 			});
 
-			// add styleMap to newThemeData.options
-			newThemeData.options.styleMap = styleMap;
+			// add styleMap to newThemeData
+			newThemeData.styleMap = styleMap;
 
-			// add stylesheet to newThemeData.options
-			const stylesheet = submitEvent.target.querySelector("textarea").value;
-			newThemeData.options.stylesheet = stylesheet;
+			// add action
+			newThemeData.action = this.action;
+			console.log(newThemeData);
 
 			await sendThemeForm(newThemeData);
 
 			this.message = "Updating theme...";
 
 			setTimeout(() => {
-				this.$router.push(`/themes`);
+				this.$router.push(`/themes/`);
 			}, 2000);
 		}
 	}
 };
 </script>
-
-<style scoped lang="scss">
-.stylesheet {
-	width: 100%;
-	min-height: 800px;
-	box-sizing: border-box;
-	font-family: "Courier New", Courier, monospace;
-	font-size: 0.9em;
-	border: 2px solid var(--slate-800);
-	border-radius: 1rem;
-	padding: 1rem;
-	resize: none;
-}
-
-form {
-	margin-bottom: 2rem;
-}
-</style>
