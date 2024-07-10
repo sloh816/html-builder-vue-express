@@ -17,7 +17,7 @@ class WordToHtml {
 
 	print() {
 		console.log("⬜ Word to HTML object created !");
-		console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile, theme: this.theme.getId() });
+		console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile, theme: this.theme.id });
 	}
 
 	getName() {
@@ -47,7 +47,7 @@ class WordToHtml {
 		const outputFolderPath = await createFolder(`${newJobFolderPath}/output`);
 
 		// create a publication object
-		const themeId = this.theme.getId();
+		const themeId = this.theme.id;
 		const publicationObject = {
 			uploadedFileName: this.wordFileName,
 			date: formatDate(timestamp.split("_")[0]),
@@ -60,10 +60,7 @@ class WordToHtml {
 		await writeFile(`${newJobFolderPath}/data.json`, JSON.stringify(publicationObject, null, 4));
 
 		//get styleMap from data.json
-		const themesFolder = `db/themes/${themeId}`;
-		const themeJsonFile = await readFile(`${themesFolder}/data.json`, "json");
-		const themeJsonData = JSON.parse(themeJsonFile);
-		let styleMap = themeJsonData.styleMap;
+		let styleMap = await this.theme.getData("styleMap");
 
 		// add two-column table, and emphasis style map item
 		styleMap.push("table[style-name='Two columns'] => table.two-columns:fresh");
@@ -78,7 +75,7 @@ class WordToHtml {
 		});
 
 		// copy stylesheet from theme folder
-		await copyFile(`${themesFolder}/style.css`, `${outputFolderPath}/style.css`);
+		await this.theme.copyStylesheet(outputFolderPath);
 
 		console.log("🟣 Run process: Word to HTML successful!");
 	}

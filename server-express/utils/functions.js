@@ -78,10 +78,19 @@ function generateId(prefix) {
 	return prefix + "-" + result;
 }
 
+// function that repeats string n times
+function repeatString(string, n) {
+	if (n <= 0) {
+		return "";
+	}
+	return Array(n).fill(string).join(" ");
+}
+
 module.exports = {
 	slugify,
 	getTimestamp,
 	formatDate,
 	formatTime,
-	generateId
+	generateId,
+	repeatString
 };

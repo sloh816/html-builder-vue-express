@@ -4,7 +4,7 @@ const express = require("express");
 const cors = require("cors");
 
 const WordToHtmlHandler = require("./controllers/wordToHtmlHandler");
-const EditThemeHandler = require("./controllers/editThemeHandler");
+const ThemeHandler = require("./controllers/themeHandler");
 
 const { createPublicationsFolder, getSubfolders } = require("./utils/fileSystem");
 
@@ -46,8 +46,8 @@ class Server {
 		const wordToHtmlHandler = new WordToHtmlHandler();
 		this.app.use(wordToHtmlHandler.router);
 
-		const editThemeHandler = new EditThemeHandler();
-		this.app.use(editThemeHandler.router);
+		const themeHandler = new ThemeHandler();
+		this.app.use(themeHandler.router);
 	}
 
 	start(portNumber) {

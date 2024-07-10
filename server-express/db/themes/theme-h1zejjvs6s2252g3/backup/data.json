@@ -5,7 +5,6 @@
         "p[style-name='Cover title'] => h1.cover-title:fresh",
         "p[style-name='Cover subtitle'] => p.cover-subtitle:fresh",
         "p[style-name='Detail heading'] => p.detail-heading:fresh",
-        "p[style-name='Detail body'] => p.detail-body:fresh",
-        "p[style-name='test'] => div.test-name:fresh"
+        "p[style-name='Detail body'] => p.detail-body:fresh"
     ]
 }
