@@ -1,21 +1,43 @@
-const { createPublicationsFolder } = require("../utils/fileSystem");
 const { getTimestamp, slugify, formatDate, formatTime } = require("../utils/functions");
 const { createFolder, copyFile, deleteFile, writeFile, readFile } = require("../utils/fileSystem");
 
 class Publication {
-	constructor(tempWordFilePath, wordFileName) {
-		this.tempWordFilePath = tempWordFilePath;
-		this.wordFileName = wordFileName;
-		this.id = this.generateId();
+	constructor(id = null) {
+		this.tempWordFilePath = null;
+		this.wordFileName = null;
+		this.id = id;
 		this.publicationFolder = `db/publications/${this.id}`;
 		this.inputWordFilePath = `${this.publicationFolder}/input/${this.wordFileName}.docx`;
 		this.outputFolderPath = `${this.publicationFolder}/output`;
+		this.setProperties();
 	}
 
-	generateId() {
+	setProperties() {
+		if (this.id) {
+			this.publicationFolder = `db/publications/${this.id}`;
+			this.inputWordFilePath = `${this.publicationFolder}/input/${this.wordFileName}.docx`;
+			this.outputFolderPath = `${this.publicationFolder}/output`;
+		}
+	}
+
+	print() {
+		return {
+			tempWordFilePath: this.tempWordFilePath,
+			wordFileName: this.wordFileName,
+			id: this.id,
+			publicationFolder: this.publicationFolder,
+			inputWordFilePath: this.inputWordFilePath,
+			outputFolderPath: this.outputFolderPath
+		};
+	}
+
+	generateId(tempWordFilePath, wordFileName) {
+		console.log(tempWordFilePath, wordFileName);
 		const timestamp = getTimestamp();
-		const id = `${timestamp + "_" + slugify(this.wordFileName)}`;
-		return id;
+		const id = `${timestamp + "_" + slugify(wordFileName)}`;
+		this.id = id;
+		this.tempWordFilePath = tempWordFilePath;
+		this.wordFileName = wordFileName;
 	}
 
 	generateDataObject() {
@@ -29,7 +51,12 @@ class Publication {
 		return dataObject;
 	}
 
-	async createPublicationFolder() {
+	async createPublicationFolder(tempWordFilePath, wordFileName) {
+		this.generateId(tempWordFilePath, wordFileName);
+		this.publicationFolder = `db/publications/${this.id}`;
+		this.inputWordFilePath = `${this.publicationFolder}/input/${this.wordFileName}.docx`;
+		this.outputFolderPath = `${this.publicationFolder}/output`;
+
 		// create a job folder in the publications folder
 		const newJobFolderPath = await createFolder(this.publicationFolder);
 

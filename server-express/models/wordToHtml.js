@@ -29,8 +29,8 @@ class WordToHtml {
 		console.log("🟡 Running process:", this.name);
 		const wordFileName = this.wordFile.replace(".docx", "");
 
-		const publication = new Publication(this.tempWordFilePath, wordFileName);
-		await publication.createPublicationFolder();
+		const publication = new Publication();
+		await publication.createPublicationFolder(this.tempWordFilePath, wordFileName);
 
 		// unzip the input word doc
 		const inputWordDoc = new WordDocument(publication.inputWordFilePath);

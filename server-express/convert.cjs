@@ -1,6 +1,7 @@
 const { unzip } = require("unzipper");
 const WordDocument = require("./models/wordDocument");
 const { readStyles } = require("./utils/unzipDocx");
+const Publication = require("./models/publication");
 
 const main = async () => {
 	// const docxFilePath = "5043 - ANROWS - FitzGibbon RR2 - v1e - client reviewed.docx";
@@ -13,21 +14,21 @@ const main = async () => {
 
 	// console.log(styleMap);
 
-	const publicationId = "2024-07-12_24-27-34_5043-anrows-fitzgibbon-rr2-v1e-client-reviewed";
+	const publicationId = "2024-07-12_03-15-08_5043-anrows-fitzgibbon-rr2-v1e-client-reviewed";
+	const publication = new Publication(publicationId);
+	console.log(publication.print());
 
-	// create the stylesheet from unzipped word
+	// // create the stylesheet from unzipped word
 
-	const wordDocument = new WordDocument(`db/publications/${publicationId}/input/5043 - ANROWS - FitzGibbon RR2 - v1e - client reviewed.docx`);
-	const unzippedWordFolder = `db/publications/${publicationId}/input/5043 - ANROWS - FitzGibbon RR2 - v1e - client reviewed`;
-	const styleMap = await wordDocument.getStyleMap(unzippedWordFolder);
+	// const wordDocument = new WordDocument(`db/publications/${publicationId}/input/5043 - ANROWS - FitzGibbon RR2 - v1e - client reviewed.docx`);
+	// const unzippedWordFolder = `db/publications/${publicationId}/input/5043 - ANROWS - FitzGibbon RR2 - v1e - client reviewed`;
+	// const styleMap = await wordDocument.getStyleMap(unzippedWordFolder);
 
-	const css = await wordDocument.getCssCode(unzippedWordFolder);
+	// const css = await wordDocument.getCssCode(unzippedWordFolder);
 
-	// console.log(css);
-
-	// create style.css file
-	const fs = require("fs");
-	fs.writeFileSync(`db/publications/${publicationId}/output/style.css`, css);
+	// // create style.css file
+	// const fs = require("fs");
+	// fs.writeFileSync(`db/publications/${publicationId}/output/style.css`, css);
 };
 
 main();
