@@ -2,22 +2,23 @@ const { getTimestamp, slugify, formatDate, formatTime } = require("../utils/func
 const { createFolder, copyFile, deleteFile, writeFile, readFile } = require("../utils/fileSystem");
 const { writeImageFiles } = require("../utils/writeImageFiles.js");
 const { writeHtmlFile } = require("../utils/writeHtmlFile.js");
+const Publication = require("./publication");
 const mammoth = require("mammoth");
 const cheerio = require("cheerio");
+const WordDocument = require("./wordDocument.js");
 
 class WordToHtml {
-	constructor(tempWordFilePath, wordFile, theme) {
+	constructor(tempWordFilePath, wordFileName) {
 		this.name = "Word to HTML";
 		this.slug = "word-to-html";
 		this.tempWordFilePath = tempWordFilePath;
-		this.wordFile = wordFile;
-		this.theme = theme;
+		this.wordFileName = wordFileName;
 		this.print();
 	}
 
 	print() {
 		console.log("⬜ Word to HTML object created !");
-		console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile, theme: this.theme.id });
+		console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFileName: this.wordFileName });
 	}
 
 	getName() {
@@ -27,55 +28,28 @@ class WordToHtml {
 	async runProcess() {
 		console.log("🟡 Running process:", this.name);
 
-		const timestamp = getTimestamp();
-		const wordFileName = this.wordFile.replace(".docx", "");
-		const newJobFolder = `${timestamp + "_" + slugify(wordFileName)}`;
+		const publication = new Publication(this.tempWordFilePath, this.wordFileName);
+		await publication.createPublicationFolder();
 
-		// create a job folder in the publications folder
-		const newJobFolderPath = await createFolder(`db/publications/${newJobFolder}`);
+		// get input word file path
+		const inputWordDoc = new WordDocument(publication.inputWordFilePath);
 
-		// create an input folder
-		const inputFolderPath = await createFolder(`${newJobFolderPath}/input`);
+		const unzippedWordFolder = await inputWordDoc.unzip();
 
-		// copy uploaded word file from temp to job input folder
-		const inputWordFilePath = await copyFile(this.tempWordFilePath, inputFolderPath + "/source.docx");
+		const styleMap = await inputWordDoc.createStyleMap(unzippedWordFolder);
 
-		// delete temp word file
-		deleteFile(this.tempWordFilePath);
-
-		// create an output folder
-		const outputFolderPath = await createFolder(`${newJobFolderPath}/output`);
-
-		// create a publication object
-		const themeId = this.theme.id;
-		const publicationObject = {
-			uploadedFileName: this.wordFileName,
-			date: formatDate(timestamp.split("_")[0]),
-			time: formatTime(timestamp.split("_")[1].replace(/-/g, ":")),
-			processName: "Word to HTML",
-			themeId
-		};
-
-		// write object to a data.json file
-		await writeFile(`${newJobFolderPath}/data.json`, JSON.stringify(publicationObject, null, 4));
-
-		//get styleMap from data.json
-		let styleMap = await this.theme.getData("styleMap");
-
-		// add two-column table, and emphasis style map item
-		styleMap.push("table[style-name='Two columns'] => table.two-columns:fresh");
-		styleMap.push("r[style-name='Emphasis'] => em:fresh");
+		console.log(styleMap);
 
 		// convert word doc to html files
 		await this.convertWordToHtml({
-			wordFilePath: inputWordFilePath,
-			outputFolderPath,
-			wordFileName,
+			wordFilePath: publication.inputWordFilePath,
+			outputFolderPath: publication.outputFolderPath,
+			wordFileName: this.wordFileName,
 			styleMap
 		});
 
-		// copy stylesheet from theme folder
-		await this.theme.copyStylesheet(outputFolderPath);
+		// // copy stylesheet from theme folder
+		// await this.theme.copyStylesheet(outputFolderPath);
 
 		console.log("🟣 Run process: Word to HTML successful!");
 	}

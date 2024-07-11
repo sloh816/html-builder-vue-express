@@ -24,20 +24,24 @@ class WordToHtmlHandler {
 
 		// add .docx extension to the file path
 		fsp.rename(req.file.path, req.file.path + ".docx");
+		const tempWordFilePath = req.file.path + ".docx";
+		const wordFileName = req.file.originalname;
+
+		const process = new WordToHtml(tempWordFilePath, wordFileName);
+		process.runProcess();
 
 		// instantiate Theme object
-		const theme = new Theme(req.body.themeId);
+		// const theme = new Theme(req.body.themeId);
 
 		// instantiate WordToHtml object
-		const tempWordFilePath = req.file.path + ".docx";
-		const wordFile = req.file.originalname;
-		const wordToHtml = new WordToHtml(tempWordFilePath, wordFile, theme);
-		wordToHtml.print();
+		// const tempWordFilePath = req.file.path + ".docx";
+		// const wordFile = req.file.originalname;
+		// const wordToHtml = new WordToHtml(tempWordFilePath, wordFile, theme);
+		// wordToHtml.print();
 
 		// run the process
-		wordToHtml.runProcess();
-        restartServer();
-
+		// wordToHtml.runProcess();
+		// restartServer();
 	}
 }
 

@@ -26,7 +26,7 @@ class ThemeHandler {
 
 		if (data.action === "edit") {
 			console.log(req.body);
-			theme.edit({ styleMap: req.body.options.  });
+			// theme.edit({ styleMap: req.body.options.  });
 		}
 
 		// update theme name
