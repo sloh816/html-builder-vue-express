@@ -1,7 +1,7 @@
 const { readDocument, readStyles, readNumbering, getBulletLvlObject, findRStyles, findPStyles, findTableStyles } = require("./unzipDocx");
 const { slugify, repeatString } = require("./functions");
 
-function addStyleItems(documentBody, styles, numbering, styleMap) {
+function addStyleItems(documentBody, styles, numbering, styleMapObject) {
 	// get all the style ids used in the document
 	const usedStyleIds = new Set(findPStyles(documentBody));
 
@@ -45,9 +45,19 @@ function addStyleItems(documentBody, styles, numbering, styleMap) {
 			// do nothing
 		}
 
-		// create styleMap item and add it to the styleMap array
-		const styleMapItem = `p[style-name='${styleName}'] => ${tag}.${slugify(styleName)}:fresh`;
-		styleMap.push(styleMapItem);
+		// create styleMap item and add it to the styleMapObject
+		styleMapItem = {
+			type: "p",
+			styleName: styleName,
+			tag: tag,
+			className: slugify(styleName),
+			id: styleId
+		};
+
+		styleMapObject.push(styleMapItem);
+
+		// const styleMapItem = `p[style-name='${styleName}'] => ${tag}.${slugify(styleName)}:fresh`;
+		// styleMap.push(styleMapItem);
 	}
 
 	// get all the character styles in the document
@@ -67,9 +77,20 @@ function addStyleItems(documentBody, styles, numbering, styleMap) {
 			tag = "em";
 		}
 
+		// create styleMap item and add it to the styleMapObject
+		styleMapItem = {
+			type: "r",
+			styleName: styleName,
+			tag: tag,
+			className: slugify(styleName),
+			id: characterStyle
+		};
+
+		styleMapObject.push(styleMapItem);
+
 		// create styleMap item and add it to the styleMap array
-		const styleMapItem = `r[style-name='${styleName}'] => ${tag}.${slugify(styleName)}:fresh`;
-		styleMap.push(styleMapItem);
+		// const styleMapItem = `r[style-name='${styleName}'] => ${tag}.${slugify(styleName)}:fresh`;
+		// styleMap.push(styleMapItem);
 	}
 
 	// get all the tableObjects in the document
@@ -80,26 +101,52 @@ function addStyleItems(documentBody, styles, numbering, styleMap) {
 		const tableStyleObject = styles.find((style) => style["$"]["w:styleId"] === tableId);
 		const tableStyleName = tableStyleObject["w:name"][0]["$"]["w:val"]; //get style name
 
+		// create styleMap item and add it to the styleMapObject
+		styleMapItem = {
+			type: "table",
+			styleName: tableStyleName,
+			tag: "table",
+			className: slugify(tableStyleName),
+			id: tableId
+		};
+
+		styleMapObject.push(styleMapItem);
+
 		// create styleMap item and add it to the styleMap array
-		const styleMapItem = `table[style-name='${tableStyleName}'] => table.${slugify(tableStyleName)}:fresh`;
+		// const styleMapItem = `table[style-name='${tableStyleName}'] => table.${slugify(tableStyleName)}:fresh`;
+		// styleMap.push(styleMapItem);
+	}
+
+	return styleMapObject;
+}
+
+function createStyleMap(styleMapObjects) {
+	let styleMap = [];
+	for (const object of styleMapObjects) {
+		const styleMapItem = `${object.type}[style-name='${object.styleName}'] => ${object.tag}.${object.className}:fresh`;
 		styleMap.push(styleMapItem);
 	}
 
 	return styleMap;
 }
 
-async function createStyleMapFromWord(unzippedWordFolder) {
+async function createStyleMapObjects(unzippedWordFolder) {
 	const documentBody = await readDocument(unzippedWordFolder);
 	const styles = await readStyles(unzippedWordFolder);
 	const numbering = await readNumbering(unzippedWordFolder);
 
-	let styleMap = [];
+	let styleMapObjects = [];
+	styleMapObjects = addStyleItems(documentBody, styles, numbering, styleMapObjects);
 
-	styleMap = addStyleItems(documentBody, styles, numbering, styleMap);
+	return styleMapObjects;
+	// console.log(styleMapObjects);
 
-	return styleMap;
+	// const styleMap = createStyleMapArray(styleMapObject);
+
+	// return styleMap;
 }
 
 module.exports = {
-	createStyleMapFromWord
+	createStyleMapObjects,
+	createStyleMap
 };

@@ -8,17 +8,17 @@ const cheerio = require("cheerio");
 const WordDocument = require("./wordDocument.js");
 
 class WordToHtml {
-	constructor(tempWordFilePath, wordFileName) {
+	constructor(tempWordFilePath, wordFile) {
 		this.name = "Word to HTML";
 		this.slug = "word-to-html";
 		this.tempWordFilePath = tempWordFilePath;
-		this.wordFileName = wordFileName;
+		this.wordFile = wordFile;
 		this.print();
 	}
 
 	print() {
 		console.log("⬜ Word to HTML object created !");
-		console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFileName: this.wordFileName });
+		console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile });
 	}
 
 	getName() {
@@ -27,26 +27,30 @@ class WordToHtml {
 
 	async runProcess() {
 		console.log("🟡 Running process:", this.name);
+		const wordFileName = this.wordFile.replace(".docx", "");
 
-		const publication = new Publication(this.tempWordFilePath, this.wordFileName);
+		const publication = new Publication(this.tempWordFilePath, wordFileName);
 		await publication.createPublicationFolder();
 
-		// get input word file path
+		// unzip the input word doc
 		const inputWordDoc = new WordDocument(publication.inputWordFilePath);
-
 		const unzippedWordFolder = await inputWordDoc.unzip();
 
-		const styleMap = await inputWordDoc.createStyleMap(unzippedWordFolder);
-
-		console.log(styleMap);
+		// create the styleMap
+		const styleMap = await inputWordDoc.getStyleMap(unzippedWordFolder);
 
 		// convert word doc to html files
 		await this.convertWordToHtml({
 			wordFilePath: publication.inputWordFilePath,
 			outputFolderPath: publication.outputFolderPath,
-			wordFileName: this.wordFileName,
+			wordFileName,
 			styleMap
 		});
+
+		const css = await inputWordDoc.getCssCode(unzippedWordFolder);
+
+		// create style.css file
+		await writeFile(`${publication.outputFolderPath}/style.css`, css);
 
 		// // copy stylesheet from theme folder
 		// await this.theme.copyStylesheet(outputFolderPath);
@@ -81,6 +85,10 @@ class WordToHtml {
 						},
 						outputFilePath: outputFolderPath + "/index.html"
 					});
+
+					// copy the template css file
+					const templateCssPath = "db/processes/word-to-html/template-style.css";
+					await copyFile(templateCssPath, outputFolderPath + "/template-style.css");
 
 					console.log("🔶 Successfully converted Word Doc to HTML Files");
 					resolve();

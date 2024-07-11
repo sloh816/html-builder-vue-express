@@ -25,9 +25,9 @@ class WordToHtmlHandler {
 		// add .docx extension to the file path
 		fsp.rename(req.file.path, req.file.path + ".docx");
 		const tempWordFilePath = req.file.path + ".docx";
-		const wordFileName = req.file.originalname;
+		const wordFile = req.file.originalname;
 
-		const process = new WordToHtml(tempWordFilePath, wordFileName);
+		const process = new WordToHtml(tempWordFilePath, wordFile);
 		process.runProcess();
 
 		// instantiate Theme object

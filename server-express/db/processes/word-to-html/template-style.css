@@ -1,0 +1,34 @@
+body {
+	background: lightgrey;
+}
+
+img {
+	max-width: 100%;
+}
+
+a {
+	word-break: break-all;
+}
+
+.html-content {
+	background: white;
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 2em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: normal;
+}
+
+@media (max-width: 800px) {
+	.html-content {
+		width: 100%;
+		padding: 1em;
+	}
+}
