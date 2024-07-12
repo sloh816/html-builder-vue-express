@@ -2,80 +2,87 @@ const { getTimestamp, slugify, formatDate, formatTime } = require("../utils/func
 const { createFolder, copyFile, deleteFile, writeFile, readFile } = require("../utils/fileSystem");
 
 class Publication {
-	constructor(id = null) {
-		this.tempWordFilePath = null;
-		this.wordFileName = null;
-		this.id = id;
-		this.publicationFolder = `db/publications/${this.id}`;
-		this.inputWordFilePath = `${this.publicationFolder}/input/${this.wordFileName}.docx`;
-		this.outputFolderPath = `${this.publicationFolder}/output`;
-		this.setProperties();
-	}
+    constructor(id = null) {
+        this.wordFileName = null;
+        this.id = id;
+        this.publicationFolder = null;
+    }
 
-	setProperties() {
-		if (this.id) {
-			this.publicationFolder = `db/publications/${this.id}`;
-			this.inputWordFilePath = `${this.publicationFolder}/input/${this.wordFileName}.docx`;
-			this.outputFolderPath = `${this.publicationFolder}/output`;
-		}
-	}
+    async setProperties(wordFileName = null) {
+        if (this.id) {
+            this.publicationFolder = `db/publications/${this.id}`;
+        }
 
-	print() {
-		return {
-			tempWordFilePath: this.tempWordFilePath,
-			wordFileName: this.wordFileName,
-			id: this.id,
-			publicationFolder: this.publicationFolder,
-			inputWordFilePath: this.inputWordFilePath,
-			outputFolderPath: this.outputFolderPath
-		};
-	}
+        if (wordFileName) {
+            this.wordFileName = wordFileName;
+        } else {
+            this.wordFileName = await this.getData("uploadedFileName");
+        }
+    }
 
-	generateId(tempWordFilePath, wordFileName) {
-		console.log(tempWordFilePath, wordFileName);
-		const timestamp = getTimestamp();
-		const id = `${timestamp + "_" + slugify(wordFileName)}`;
-		this.id = id;
-		this.tempWordFilePath = tempWordFilePath;
-		this.wordFileName = wordFileName;
-	}
+    async getData(key = false) {
+        const data = await readFile(`${this.publicationFolder}/data.json`);
+        if (!key) {
+            return JSON.parse(data);
+        } else {
+            const value = JSON.parse(data)[key];
+            if (value) {
+                return value;
+            } else {
+                console.log(`❌ Key '${key}' not found in the publication data.json file`);
+                return value;
+            }
+        }
+    }
 
-	generateDataObject() {
-		const timestamp = getTimestamp();
-		const dataObject = {
-			uploadedFileName: this.wordFileName,
-			date: formatDate(timestamp.split("_")[0]),
-			time: formatTime(timestamp.split("_")[1].replace(/-/g, ":")),
-			processName: "Word to HTML"
-		};
-		return dataObject;
-	}
+    print() {
+        return {
+            wordFileName: this.wordFileName,
+            id: this.id,
+            publicationFolder: this.publicationFolder,
+        };
+    }
 
-	async createPublicationFolder(tempWordFilePath, wordFileName) {
-		this.generateId(tempWordFilePath, wordFileName);
-		this.publicationFolder = `db/publications/${this.id}`;
-		this.inputWordFilePath = `${this.publicationFolder}/input/${this.wordFileName}.docx`;
-		this.outputFolderPath = `${this.publicationFolder}/output`;
+    setId(wordFileName) {
+        const timestamp = getTimestamp();
+        const id = `${timestamp + "_" + slugify(wordFileName)}`;
+        this.id = id;
+    }
 
-		// create a job folder in the publications folder
-		const newJobFolderPath = await createFolder(this.publicationFolder);
+    generateDataObject() {
+        const timestamp = getTimestamp();
+        const dataObject = {
+            uploadedFileName: this.wordFileName,
+            date: formatDate(timestamp.split("_")[0]),
+            time: formatTime(timestamp.split("_")[1].replace(/-/g, ":")),
+            processName: "Word to HTML",
+        };
+        return dataObject;
+    }
 
-		// create an input folder
-		const inputFolderPath = await createFolder(`${newJobFolderPath}/input`);
+    async createPublicationFolder(tempWordFilePath, wordFileName) {
+        this.setId(wordFileName);
+        this.setProperties(wordFileName);
 
-		// copy uploaded word file from temp to job input folder
-		await copyFile(this.tempWordFilePath, inputFolderPath + `/${this.wordFileName}.docx`);
+        // create a job folder in the publications folder
+        const newJobFolderPath = await createFolder(this.publicationFolder);
 
-		// delete temp word file
-		deleteFile(this.tempWordFilePath);
+        // create an input folder
+        const inputFolderPath = await createFolder(`${newJobFolderPath}/input`);
 
-		// create an output folder
-		await createFolder(`${newJobFolderPath}/output`);
+        // copy uploaded word file from temp to job input folder
+        await copyFile(tempWordFilePath, inputFolderPath + `/source.docx`);
 
-		// create data.json file
-		const dataObject = this.generateDataObject();
-		await writeFile(`${newJobFolderPath}/data.json`, JSON.stringify(dataObject, null, 4));
-	}
+        // delete temp word file
+        deleteFile(tempWordFilePath);
+
+        // create an output folder
+        await createFolder(`${newJobFolderPath}/output`);
+
+        // create data.json file
+        const dataObject = this.generateDataObject();
+        await writeFile(`${newJobFolderPath}/data.json`, JSON.stringify(dataObject, null, 4));
+    }
 }
 
 module.exports = Publication;
