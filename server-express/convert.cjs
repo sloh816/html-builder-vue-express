@@ -9,6 +9,13 @@ const main = async () => {
     await publication.setProperties();
     console.log(publication.print());
 
+    const inputWordFile = `${publication.folder}/input/source.docx}`;
+    const wordDocument = new WordDocument(inputWordFile);
+    const unzippedWordFolder = `${publication.folder}/input/source`;
+
+    const styleMap = await wordDocument.getStyleMap(unzippedWordFolder);
+    console.log(styleMap);
+
     // // create the stylesheet from unzipped word
 
     // const wordDocument = new WordDocument(`db/publications/${publicationId}/input/5043 - ANROWS - FitzGibbon RR2 - v1e - client reviewed.docx`);

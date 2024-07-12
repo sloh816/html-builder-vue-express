@@ -5,12 +5,12 @@ class Publication {
     constructor(id = null) {
         this.wordFileName = null;
         this.id = id;
-        this.publicationFolder = null;
+        this.folder = null;
     }
 
     async setProperties(wordFileName = null) {
         if (this.id) {
-            this.publicationFolder = `db/publications/${this.id}`;
+            this.folder = `db/publications/${this.id}`;
         }
 
         if (wordFileName) {
@@ -21,7 +21,7 @@ class Publication {
     }
 
     async getData(key = false) {
-        const data = await readFile(`${this.publicationFolder}/data.json`);
+        const data = await readFile(`${this.folder}/data.json`);
         if (!key) {
             return JSON.parse(data);
         } else {
@@ -39,7 +39,7 @@ class Publication {
         return {
             wordFileName: this.wordFileName,
             id: this.id,
-            publicationFolder: this.publicationFolder,
+            publicationFolder: this.folder,
         };
     }
 
@@ -65,7 +65,7 @@ class Publication {
         this.setProperties(wordFileName);
 
         // create a job folder in the publications folder
-        const newJobFolderPath = await createFolder(this.publicationFolder);
+        const newJobFolderPath = await createFolder(this.folder);
 
         // create an input folder
         const inputFolderPath = await createFolder(`${newJobFolderPath}/input`);

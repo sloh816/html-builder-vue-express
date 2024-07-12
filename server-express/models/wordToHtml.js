@@ -33,14 +33,14 @@ class WordToHtml {
         await publication.createPublicationFolder(this.tempWordFilePath, wordFileName);
 
         // unzip the input word doc
-        const wordFilePath = `${publication.publicationFolder}/input/source.docx`;
+        const wordFilePath = `${publication.folder}/input/source.docx`;
         const inputWordDoc = new WordDocument(wordFilePath);
         const unzippedWordFolder = await inputWordDoc.unzip();
 
         // create the styleMap
         const styleMap = await inputWordDoc.getStyleMap(unzippedWordFolder);
 
-        const outputFolderPath = `${publication.publicationFolder}/output`;
+        const outputFolderPath = `${publication.folder}/output`;
 
         // convert word doc to html files
         await this.convertWordToHtml({
