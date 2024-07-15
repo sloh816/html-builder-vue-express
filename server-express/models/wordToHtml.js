@@ -1,187 +1,251 @@
-const { getTimestamp, slugify, formatDate, formatTime } = require("../utils/functions");
-const { createFolder, copyFile, deleteFile, writeFile, readFile } = require("../utils/fileSystem");
-const { writeImageFiles } = require("../utils/writeImageFiles.js");
+const { slugify, emuToPixels } = require("../utils/functions");
+const { createFolder, copyFile, writeFile, readFile } = require("../utils/fileSystem");
 const { writeHtmlFile } = require("../utils/writeHtmlFile.js");
+const { readDocument } = require("../utils/unzipDocx");
 const Publication = require("./publication");
+const WordDocument = require("./wordDocument.js");
 const mammoth = require("mammoth");
 const cheerio = require("cheerio");
-const WordDocument = require("./wordDocument.js");
+const path = require("path");
+const fs = require("fs");
 
 class WordToHtml {
-    constructor(tempWordFilePath, wordFile) {
-        this.name = "Word to HTML";
-        this.slug = "word-to-html";
-        this.tempWordFilePath = tempWordFilePath;
-        this.wordFile = wordFile;
-        this.print();
-    }
+	constructor(tempWordFilePath, wordFile) {
+		this.name = "Word to HTML";
+		this.slug = "word-to-html";
+		this.tempWordFilePath = tempWordFilePath;
+		this.wordFile = wordFile;
+		this.print();
+	}
 
-    print() {
-        console.log("⬜ Word to HTML object created !");
-        console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile });
-    }
+	print() {
+		console.log("⬜ Word to HTML object created !");
+		console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile });
+	}
 
-    getName() {
-        return this.name;
-    }
+	getName() {
+		return this.name;
+	}
 
-    async runProcess() {
-        console.log("🟡 Running process:", this.name);
-        const wordFileName = this.wordFile.replace(".docx", "");
+	async runProcess() {
+		console.log("🟡 Running process:", this.name);
+		const wordFileName = this.wordFile.replace(".docx", "");
 
-        const publication = new Publication();
-        await publication.createPublicationFolder(this.tempWordFilePath, wordFileName);
+		const publication = new Publication();
+		await publication.createPublicationFolder(this.tempWordFilePath, wordFileName);
 
-        // unzip the input word doc
-        const wordFilePath = `${publication.folder}/input/source.docx`;
-        const inputWordDoc = new WordDocument(wordFilePath);
-        const unzippedWordFolder = await inputWordDoc.unzip();
+		// unzip the input word doc
+		const wordFilePath = `${publication.folder}/input/source.docx`;
+		const inputWordDoc = new WordDocument(wordFilePath);
+		const unzippedWordFolder = await inputWordDoc.unzip();
 
-        // create the styleMap
-        const styleMap = await inputWordDoc.getStyleMap(unzippedWordFolder);
+		// create the styleMap
+		const styleMap = await inputWordDoc.getStyleMap(unzippedWordFolder);
 
-        const outputFolderPath = `${publication.folder}/output`;
+		const outputFolderPath = `${publication.folder}/output`;
 
-        // convert word doc to html files
-        await this.convertWordToHtml({
-            wordFilePath,
-            outputFolderPath,
-            wordFileName,
-            styleMap,
-        });
+		// convert word doc to html files
+		await this.convertWordToHtml({
+			wordFilePath,
+			outputFolderPath,
+			wordFileName,
+			styleMap,
+			unzippedWordFolder
+		});
 
-        const css = await inputWordDoc.getCssCode(unzippedWordFolder);
+		const css = await inputWordDoc.getCssCode(unzippedWordFolder);
 
-        // create style.css file
-        await writeFile(`${outputFolderPath}/style.css`, css);
+		// create style.css file
+		await writeFile(`${outputFolderPath}/style.css`, css);
 
-        // // copy stylesheet from theme folder
-        // await this.theme.copyStylesheet(outputFolderPath);
+		// // copy stylesheet from theme folder
+		// await this.theme.copyStylesheet(outputFolderPath);
 
-        console.log("🟣 Run process: Word to HTML successful!");
-    }
+		console.log("🟣 Run process: Word to HTML successful!");
+	}
 
-    convertWordToHtml({ wordFilePath, outputFolderPath, wordFileName, styleMap }) {
-        console.log("🟠 Converting Word Doc to HTML Files");
+	async convertWordToHtml({ wordFilePath, outputFolderPath, wordFileName, styleMap, unzippedWordFolder }) {
+		console.log("🟠 Converting Word Doc to HTML Files");
 
-        return new Promise((resolve) => {
-            mammoth
-                .convertToHtml({ path: wordFilePath }, { styleMap })
-                .then(async (result) => {
-                    let html = result.value;
+		// create images folder
+		const imagesFolderPath = `${outputFolderPath}/images`;
+		await createFolder(imagesFolderPath);
 
-                    // write image files
-                    let $ = cheerio.load(html);
-                    const imagesFolder = await createFolder(outputFolderPath + "/images");
-                    html = await writeImageFiles($, imagesFolder, slugify(wordFileName));
+		return new Promise((resolve) => {
+			let imageCounter = 0;
+			mammoth
+				.convertToHtml(
+					{
+						path: wordFilePath
+					},
+					{
+						styleMap: styleMap,
+						convertImage: mammoth.images.imgElement(async (image) => {
+							console.log("🔃 Writing image files...");
+							const imageBuffer = await image.read();
+							const imageExt = image.contentType.split("/").pop();
+							const imagesFolderName = "images";
 
-                    // clean up HTML
-                    const body = await this.cleanUpHtml(html);
+							const imageFilename = `${slugify(wordFileName)}-image${imageCounter}.${imageExt}`;
 
-                    // write html file
-                    const templatePath = "db/processes/word-to-html/single.html";
-                    await writeHtmlFile({
-                        templateFilePath: templatePath,
-                        data: {
-                            content: body,
-                            title: wordFileName,
-                        },
-                        outputFilePath: outputFolderPath + "/index.html",
-                    });
+							await fs.promises.writeFile(path.join(outputFolderPath, imagesFolderName, imageFilename), imageBuffer, { encoding: "base64" });
 
-                    // copy the template css file
-                    const templateCssPath = "db/processes/word-to-html/template-style.css";
-                    await copyFile(templateCssPath, outputFolderPath + "/template-style.css");
+							console.log("Finished writing", path.join(imagesFolderName, imageFilename));
 
-                    console.log("🔶 Successfully converted Word Doc to HTML Files");
-                    resolve();
-                })
-                .catch((err) => {
-                    console.error("🔴 Error converting Word to HTML:", err);
-                });
-        });
-    }
+							imageCounter++;
 
-    async cleanUpHtml(html) {
-        console.log("🔃 Cleaning up HTML...");
+							return {
+								src: `${imagesFolderName}/${imageFilename}`
+							};
+						})
+					}
+				)
+				.then(async (result) => {
+					let html = result.value;
 
-        try {
-            let $ = cheerio.load(html);
+					// clean up HTML
+					html = await this.cleanUpHtml(html, unzippedWordFolder);
 
-            // Select all <a> tags with an id that starts with '_'
-            $("a[id^=_]").each((index, element) => {
-                const id = $(element).attr("id");
-                $(element).parent().attr("id", id); // Move the id to its parent tag
-                $(element).remove();
-            });
+					// write html file
+					const templatePath = "db/processes/word-to-html/single.html";
+					await writeHtmlFile({
+						templateFilePath: templatePath,
+						data: {
+							content: html,
+							title: wordFileName
+						},
+						outputFilePath: outputFolderPath + "/index.html"
+					});
 
-            // replace TOC links with cleaner links
-            $("[id^=_]").each((index, element) => {
-                const currentId = $(element).attr("id");
-                const cleanId = index + "_" + slugify($(element).text().trim());
-                $(`[href*=#${currentId}]`).attr("href", `#${cleanId}`);
-                $(element).attr("id", cleanId);
-            });
+					// copy the template css file
+					const templateCssPath = "db/processes/word-to-html/template-style.css";
+					await copyFile(templateCssPath, outputFolderPath + "/template-style.css");
 
-            // Select all <p> tags containing only an image
-            $("p").each((index, element) => {
-                if ($(element).children().length === 1 && $(element).children("img").length === 1) {
-                    // Unwrap the image
-                    $(element).children("img").unwrap();
-                }
-            });
+					console.log("🔶 Successfully converted Word Doc to HTML Files");
+					resolve();
+				})
+				.catch((err) => {
+					console.error("🔴 Error converting Word to HTML:", err);
+				});
+		});
+	}
 
-            // add an aria label to the footnote back button
-            $("a[href^=#footnote]").each((index, element) => {
-                $(element).attr("aria-label", "Back to footnote reference");
-            });
+	async cleanUpHtml(html, unzippedWordFolder) {
+		console.log("🔃 Cleaning up HTML...");
 
-            // wrap the footnotes list in a 'section' tag and add a 'Footnotes' heading
-            $("ol:has(li[id*=footnote])").each((index, element) => {
-                $(element).wrap('<section id="footnotes"></section>');
-            });
-            $("#footnotes").prepend("<h2>Footnotes</h2>");
+		try {
+			let $ = cheerio.load(html);
 
-            // if there's a strong tag inside another strong tag, remove the second one.
-            $("strong > strong").each((index, element) => {
-                $(element).unwrap();
-            });
+			// add image sizes
+			const imageSizes = await this.getImageSizes(unzippedWordFolder);
 
-            // convert table with class 'two-columns' to a two-column div layout
-            $("table.two-columns").each((index, element) => {
-                const table = $(element);
+			$("img").each((index, img) => {
+				const imageSize = imageSizes[index];
 
-                const column1Contents = table.find("td:nth-child(1)").html();
-                const column2Contents = table.find("td:nth-child(2)").html();
+				$(img).attr("width", imageSize.width);
+				$(img).attr("height", imageSize.height);
+			});
 
-                const twoColumnDiv = $(`<div class="two-columns">`);
-                twoColumnDiv.append(`<div class="column-1">${column1Contents}</div>`);
-                twoColumnDiv.append(`<div class="column-2">${column2Contents}</div>`);
+			// Select all <a> tags with an id that starts with '_'
+			$("a[id^=_]").each((index, element) => {
+				const id = $(element).attr("id");
+				$(element).parent().attr("id", id); // Move the id to its parent tag
+				$(element).remove();
+			});
 
-                table.replaceWith(twoColumnDiv);
-            });
+			// replace TOC links with cleaner links
+			$("[id^=_]").each((index, element) => {
+				const currentId = $(element).attr("id");
+				const cleanId = index + "_" + slugify($(element).text().trim());
+				$(`[href*=#${currentId}]`).attr("href", `#${cleanId}`);
+				$(element).attr("id", cleanId);
+			});
 
-            // add classes to images from alt text:
-            const pattern = /\$__(\w+)/;
-            $("img").each(function () {
-                var altText = $(this).attr("alt");
-                var match = pattern.exec(altText);
-                while (match) {
-                    $(this).addClass(match[1]);
-                    altText = altText.replace(match[0], "");
-                    match = pattern.exec(altText);
-                }
-                $(this).attr("alt", altText);
-            });
+			// Select all <p> tags containing only an image
+			$("p").each((index, element) => {
+				if ($(element).children().length === 1 && $(element).children("img").length === 1) {
+					// Unwrap the image
+					$(element).children("img").unwrap();
+				}
+			});
 
-            console.log("✅ HTML cleaned up.");
+			// add an aria label to the footnote back button
+			$("a[href^=#footnote]").each((index, element) => {
+				$(element).attr("aria-label", "Back to footnote reference");
+			});
 
-            // return clean html
-            return $("body").html();
-        } catch (err) {
-            console.error("🔴 Error cleaning up HTML:", err);
-        }
-    }
+			// wrap the footnotes list in a 'section' tag and add a 'Footnotes' heading
+			$("ol:has(li[id*=footnote])").each((index, element) => {
+				$(element).wrap('<section id="footnotes"></section>');
+			});
+			$("#footnotes").prepend("<h2>Footnotes</h2>");
+
+			// if there's a strong tag inside another strong tag, remove the second one.
+			$("strong > strong").each((index, element) => {
+				$(element).unwrap();
+			});
+
+			// convert table with class 'two-columns' to a two-column div layout
+			$("table.two-columns").each((index, element) => {
+				const table = $(element);
+
+				const column1Contents = table.find("td:nth-child(1)").html();
+				const column2Contents = table.find("td:nth-child(2)").html();
+
+				const twoColumnDiv = $(`<div class="two-columns">`);
+				twoColumnDiv.append(`<div class="column-1">${column1Contents}</div>`);
+				twoColumnDiv.append(`<div class="column-2">${column2Contents}</div>`);
+
+				table.replaceWith(twoColumnDiv);
+			});
+
+			// add classes to images from alt text:
+			const pattern = /\$__(\w+)/;
+			$("img").each(function () {
+				var altText = $(this).attr("alt");
+				var match = pattern.exec(altText);
+				while (match) {
+					$(this).addClass(match[1]);
+					altText = altText.replace(match[0], "");
+					match = pattern.exec(altText);
+				}
+				$(this).attr("alt", altText);
+			});
+
+			console.log("✅ HTML cleaned up.");
+
+			// return clean html
+			return $("body").html();
+		} catch (err) {
+			console.error("🔴 Error cleaning up HTML:", err);
+		}
+	}
+
+	async getImageSizes(unzippedFolderPath) {
+		try {
+			// const xmlData = await readDocument(unzippedFolderPath);
+			const documentXML = await readFile(`${unzippedFolderPath}/word/document.xml`, "utf8");
+
+			const $ = cheerio.load(documentXML);
+
+			const imageSizes = [];
+
+			$("w\\:drawing").each((index, drawing) => {
+				const inline = $(drawing).find("wp\\:inline wp\\:extent");
+				const width = parseInt(inline.attr("cx"));
+				const height = parseInt(inline.attr("cy"));
+
+				imageSizes.push({
+					width: emuToPixels(width),
+					height: emuToPixels(height)
+				});
+			});
+			return imageSizes;
+		} catch (err) {
+			console.error("Error:", err);
+			throw err;
+		}
+	}
 }
 
 module.exports = WordToHtml;

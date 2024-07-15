@@ -28,7 +28,8 @@ class WordToHtmlHandler {
 		const wordFile = req.file.originalname;
 
 		const process = new WordToHtml(tempWordFilePath, wordFile);
-		process.runProcess();
+		await process.runProcess();
+		// restartServer();
 
 		// instantiate Theme object
 		// const theme = new Theme(req.body.themeId);

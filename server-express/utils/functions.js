@@ -86,11 +86,16 @@ function repeatString(string, n) {
 	return Array(n).fill(string).join(" ");
 }
 
+function emuToPixels(emu) {
+	return Math.floor(emu / 9525, 1);
+}
+
 module.exports = {
 	slugify,
 	getTimestamp,
 	formatDate,
 	formatTime,
 	generateId,
-	repeatString
+	repeatString,
+	emuToPixels
 };
