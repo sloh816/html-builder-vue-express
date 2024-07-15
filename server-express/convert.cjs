@@ -23,13 +23,18 @@ const getImageSizes = async (unzippedFolderPath) => {
 
 		$("w\\:drawing").each((index, drawing) => {
 			const inline = $(drawing).find("wp\\:inline wp\\:extent");
-			const width = parseInt(inline.attr("cx"));
-			const height = parseInt(inline.attr("cy"));
 
-			imageSizes.push({
-				width: emuToPixels(width),
-				height: emuToPixels(height)
-			});
+			if (inline.length > 0) {
+				const width = parseInt(inline.attr("cx"));
+				const height = parseInt(inline.attr("cy"));
+
+				imageSizes.push({
+					width: emuToPixels(width),
+					height: emuToPixels(height)
+				});
+			} else {
+				console.log("❌ Error: There are images that are not inline.");
+			}
 		});
 		return imageSizes;
 	} catch (err) {
@@ -39,7 +44,7 @@ const getImageSizes = async (unzippedFolderPath) => {
 };
 
 const main = async () => {
-	const publicationId = "2024-07-15_13-31-31_5043-anrows-fitzgibbon-rr2-v1e-client-reviewed";
+	const publicationId = "2024-07-15_15-44-14_5043-anrows-ncas-21-summary-report-v2-client-reviewed";
 
 	const publication = new Publication(publicationId);
 	await publication.setProperties();
@@ -54,21 +59,9 @@ const main = async () => {
 	const css = await wordDocument.getCssCode(unzippedWordFolder);
 
 	const imageSizes = await getImageSizes(unzippedWordFolder);
-
-	const html = await readFile(`${publication.folder}/output/index.html`, "utf8");
-
-	const $ = cheerio.load(html);
-	$("img").each((index, img) => {
-		// console.log($(img).prop("outerHTML"));
-		const imageSize = imageSizes[index];
-
-		$(img).attr("width", imageSize.width);
-		$(img).attr("height", imageSize.height);
-	});
-
-	// console.log($.html());
-
 	// console.log(imageSizes);
+
+	console.log(css);
 
 	// // create the stylesheet from unzipped word
 

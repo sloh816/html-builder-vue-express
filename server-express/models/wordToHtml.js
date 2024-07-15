@@ -232,13 +232,19 @@ class WordToHtml {
 
 			$("w\\:drawing").each((index, drawing) => {
 				const inline = $(drawing).find("wp\\:inline wp\\:extent");
-				const width = parseInt(inline.attr("cx"));
-				const height = parseInt(inline.attr("cy"));
 
-				imageSizes.push({
-					width: emuToPixels(width),
-					height: emuToPixels(height)
-				});
+				// checks if the image is inline
+				if (inline.length > 0) {
+					const width = parseInt(inline.attr("cx"));
+					const height = parseInt(inline.attr("cy"));
+
+					imageSizes.push({
+						width: emuToPixels(width),
+						height: emuToPixels(height)
+					});
+				} else {
+					console.log("❌ Error: There are images that are not inline.");
+				}
 			});
 			return imageSizes;
 		} catch (err) {

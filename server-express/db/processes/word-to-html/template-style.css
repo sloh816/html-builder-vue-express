@@ -2,28 +2,33 @@ body {
 	background: lightgrey;
 }
 
-img {
-	max-width: 100%;
-}
-
-a {
-	word-break: break-all;
-}
-
-.html-content {
+.word-to-html {
 	background: white;
 	max-width: 800px;
 	margin: 0 auto;
 	padding: 2em;
+	line-height: 1.4;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+.word-to-html img {
+	max-width: 100%;
+}
+
+.word-to-html a {
+	word-break: break-word;
+}
+
+.word-to-html li:has(> ul) {
+	list-style-type: none;
+}
+
+.word-to-html :is(h1, h2, h3, h4, h5, h6) {
 	font-weight: normal;
+	margin: 1.5em 0 1em;
+}
+
+.word-to-html p {
+	margin: 1em 0;
 }
 
 @media (max-width: 800px) {
