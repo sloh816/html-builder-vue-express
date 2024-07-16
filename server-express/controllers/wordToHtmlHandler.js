@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const fsp = require("fs").promises;
 const WordToHtml = require("../models/wordToHtml");
+const Publication = require("../models/publication");
 const Theme = require("../models/theme");
 const { restartServer } = require("../utils/pm2");
 
@@ -27,9 +28,12 @@ class WordToHtmlHandler {
 		const tempWordFilePath = req.file.path + ".docx";
 		const wordFile = req.file.originalname;
 
-		const process = new WordToHtml(tempWordFilePath, wordFile);
+		const publication = new Publication();
+		await publication.createPublicationFolder(tempWordFilePath, wordFile);
+
+		const process = new WordToHtml(publication);
 		await process.runProcess();
-		// restartServer();
+		restartServer();
 
 		// instantiate Theme object
 		// const theme = new Theme(req.body.themeId);

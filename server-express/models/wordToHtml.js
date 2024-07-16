@@ -10,17 +10,16 @@ const path = require("path");
 const fs = require("fs");
 
 class WordToHtml {
-	constructor(tempWordFilePath, wordFile) {
+	constructor(publication) {
 		this.name = "Word to HTML";
 		this.slug = "word-to-html";
-		this.tempWordFilePath = tempWordFilePath;
-		this.wordFile = wordFile;
+		this.publication = publication;
 		this.print();
 	}
 
 	print() {
 		console.log("⬜ Word to HTML object created !");
-		console.log({ name: this.name, slug: this.slug, tempWordFilePath: this.tempWordFilePath, wordFile: this.wordFile });
+		console.log({ name: this.name, slug: this.slug, publication: this.publication.id });
 	}
 
 	getName() {
@@ -29,10 +28,8 @@ class WordToHtml {
 
 	async runProcess() {
 		console.log("🟡 Running process:", this.name);
-		const wordFileName = this.wordFile.replace(".docx", "");
-
-		const publication = new Publication();
-		await publication.createPublicationFolder(this.tempWordFilePath, wordFileName);
+		const publication = this.publication;
+		const wordFileName = publication.wordFileName;
 
 		// unzip the input word doc
 		const wordFilePath = `${publication.folder}/input/source.docx`;
@@ -138,7 +135,6 @@ class WordToHtml {
 
 			// add image sizes
 			const imageSizes = await this.getImageSizes(unzippedWordFolder);
-
 			$("img").each((index, img) => {
 				const imageSize = imageSizes[index];
 
@@ -185,18 +181,30 @@ class WordToHtml {
 				$(element).unwrap();
 			});
 
-			// convert table with class 'two-columns' to a two-column div layout
-			$("table.two-columns").each((index, element) => {
+			// if table class name contains the word, 'layout' then convert the table into divs
+			$("table[class*='layout']").each((index, element) => {
 				const table = $(element);
+				const className = table.attr("class");
 
-				const column1Contents = table.find("td:nth-child(1)").html();
-				const column2Contents = table.find("td:nth-child(2)").html();
+				const div = $(`<div class="${className}">`);
 
-				const twoColumnDiv = $(`<div class="two-columns">`);
-				twoColumnDiv.append(`<div class="column-1">${column1Contents}</div>`);
-				twoColumnDiv.append(`<div class="column-2">${column2Contents}</div>`);
+				// for each row, we create a div
+				table.find("tr").each((index, row) => {
+					const rowDiv = $("<div>");
 
-				table.replaceWith(twoColumnDiv);
+					// for each cell, we create a div and append the cell's content
+					$(row)
+						.find("td")
+						.each((index, cell) => {
+							const cellDiv = $("<div>");
+							cellDiv.append($(cell).html());
+							rowDiv.append(cellDiv);
+						});
+
+					div.append(rowDiv);
+				});
+
+				table.replaceWith(div);
 			});
 
 			// add classes to images from alt text:

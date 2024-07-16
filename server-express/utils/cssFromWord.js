@@ -1,5 +1,6 @@
 const { getSubfolders, readFile } = require("./fileSystem");
 const { readStyles } = require("./unzipDocx");
+const Fonts = require("../models/fonts");
 
 function getColour(styleId, styles) {
 	const styleObject = styles.find((style) => style["$"]["w:styleId"] === styleId);
@@ -203,17 +204,96 @@ function getFontFamily(styleId, styles) {
 	}
 }
 
-async function setFontFamily(cssObject, selector, fontFamily) {
-	// find the font folder
-	const fonts = await getSubfolders("db/fonts");
-	const font = fonts.find((font) => font === fontFamily);
+function getBorder(styleId, styles) {
+	const styleObject = styles.find((style) => style["$"]["w:styleId"] === styleId);
+	try {
+		const border = styleObject["w:pPr"][0]["w:pBdr"][0];
+		return {
+			top: border["w:top"][0]["$"],
+			bottom: border["w:bottom"][0]["$"],
+			left: border["w:left"][0]["$"],
+			right: border["w:right"][0]["$"]
+		};
+	} catch {
+		try {
+			const parentStyleId = styleObject["w:basedOn"][0]["$"]["w:val"];
+			return getBorder(parentStyleId, styles);
+		} catch {
+			// do nothing
+		}
+	}
+}
 
-	// read the data.json file
-	const fontDataFile = await readFile("db/fonts/" + font + "/data.json", "utf8");
-	const fontData = JSON.parse(fontDataFile);
-	const css = fontData.css;
+function setBorder(cssObject, selector, border) {
+	const borderSide = (side) => {
+		const borderObject = border[side];
+		if (borderObject) {
+			let borderStyle = "";
+
+			if (borderObject["w:val"] === "single") {
+				borderStyle = "solid";
+			}
+
+			if (borderObject["w:sz"]) {
+				const borderSize = parseInt(borderObject["w:sz"] / 4);
+				borderStyle += ` ${borderSize}px`;
+			}
+
+			if (borderObject["w:color"]) {
+				const colour = borderObject["w:color"];
+				borderStyle += ` #${colour}`;
+			}
+
+			cssObject[selector][`border-${side}`] = borderStyle;
+
+			if (borderObject["w:space"]) {
+				let space = parseInt(borderObject["w:space"]);
+
+				if (side === "left") {
+					if (cssObject[selector][`margin-${side}`]) {
+						const margin = parseInt(cssObject[selector][`margin-${side}`].replace("px", ""));
+						space += margin;
+						delete cssObject[selector][`margin-${side}`];
+					}
+				}
+
+				cssObject[selector][`padding-${side}`] = `${space}px`;
+			}
+		}
+	};
+
+	for (const side in border) {
+		borderSide(side);
+	}
+}
+
+async function setFontFamily(cssObject, selector, fontFamily) {
+	const fonts = new Fonts();
+	const font = await fonts.getFont(fontFamily);
+	const css = font["css"];
 
 	cssObject[selector]["font-family"] = css;
+}
+
+function getShading(styleId, styles) {
+	const styleObject = styles.find((style) => style["$"]["w:styleId"] === styleId);
+	try {
+		const shading = styleObject["w:pPr"][0]["w:shd"][0]["$"]["w:fill"];
+		return shading;
+	} catch {
+		try {
+			const parentStyleId = styleObject["w:basedOn"][0]["$"]["w:val"];
+			return getShading(parentStyleId, styles);
+		} catch {
+			// do nothing
+		}
+	}
+}
+
+function setBackgroundColor(cssObject, selector, colourId) {
+	if (colourId && colourId !== "auto") {
+		cssObject[selector]["background-color"] = `#${colourId}`;
+	}
 }
 
 async function createCssObject(unzippedWordFolder, styleMapObjects) {
@@ -271,6 +351,18 @@ async function createCssObject(unzippedWordFolder, styleMapObjects) {
 		const fontFamily = getFontFamily(object.id, styles);
 		if (fontFamily) {
 			await setFontFamily(cssObject, selector, fontFamily);
+		}
+
+		// border
+		const border = getBorder(object.id, styles);
+		if (border) {
+			setBorder(cssObject, selector, border);
+		}
+
+		// shading
+		const shading = getShading(object.id, styles);
+		if (shading) {
+			setBackgroundColor(cssObject, selector, shading);
 		}
 	}
 

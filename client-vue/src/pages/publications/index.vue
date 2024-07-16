@@ -1,5 +1,14 @@
-<script setup>
+<script async setup>
+import { ref, onMounted } from "vue";
+import { getData } from "@/server/get";
 import Button from "@/components/Button.vue";
+
+// publications code
+const publications = ref([]);
+onMounted(async () => {
+	publications.value = await getData("publications");
+	publications.value.sort((a, b) => a.id.localeCompare(b.id)).reverse();
+});
 </script>
 
 <template>
@@ -16,25 +25,6 @@ import Button from "@/components/Button.vue";
 		</li>
 	</ul>
 </template>
-
-<script>
-import { getData } from "@/server/get";
-
-export default {
-	name: "PublicationsView",
-
-	data() {
-		return {
-			publications: []
-		};
-	},
-
-	async created() {
-		this.publications = await getData("publications");
-		this.publications.reverse();
-	}
-};
-</script>
 
 <style lang="scss" scoped>
 ul {

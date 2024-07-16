@@ -7,6 +7,8 @@ const { readFile } = require("fs").promises;
 const path = require("path");
 const xml2js = require("xml2js");
 const fs = require("fs");
+const Fonts = require("./models/fonts");
+const WordToHtml = require("./models/wordToHtml");
 
 function emuToPixels(emu) {
 	return Math.floor(emu / 9525, 1);
@@ -44,24 +46,35 @@ const getImageSizes = async (unzippedFolderPath) => {
 };
 
 const main = async () => {
-	const publicationId = "2024-07-15_15-44-14_5043-anrows-ncas-21-summary-report-v2-client-reviewed";
+	const publicationId = "2024-07-16_11-19-40_5043-anrows-ncas-21-summary-report-v2-client-reviewed";
 
 	const publication = new Publication(publicationId);
 	await publication.setProperties();
-	console.log(publication.print());
 
-	const inputWordFile = `${publication.folder}/input/source.docx}`;
-	const wordDocument = new WordDocument(inputWordFile);
-	const unzippedWordFolder = `${publication.folder}/input/source`;
+	const process = new WordToHtml(publication);
+	await process.runProcess();
 
-	const styleMap = await wordDocument.getStyleMap(unzippedWordFolder);
+	// unzip the input word doc
+	// const wordFilePath = `${publication.folder}/input/source.docx`;
+	// const inputWordDoc = new WordDocument(wordFilePath);
+	// const unzippedWordFolder = await inputWordDoc.unzip();
+	// await inputWordDoc.getStyleMap(unzippedWordFolder);
+	// const css = await inputWordDoc.getCssCode(unzippedWordFolder);
 
-	const css = await wordDocument.getCssCode(unzippedWordFolder);
+	// console.log(css);
 
-	const imageSizes = await getImageSizes(unzippedWordFolder);
+	// const inputWordFile = `${publication.folder}/input/source.docx}`;
+	// const wordDocument = new WordDocument(inputWordFile);
+	// const unzippedWordFolder = await wordDocument.unzip();
+
+	// const styleMap = await wordDocument.getStyleMap(unzippedWordFolder);
+
+	// const css = await wordDocument.getCssCode(unzippedWordFolder);
+
+	// const imageSizes = await getImageSizes(unzippedWordFolder);
 	// console.log(imageSizes);
 
-	console.log(css);
+	// console.log(css);
 
 	// // create the stylesheet from unzipped word
 
