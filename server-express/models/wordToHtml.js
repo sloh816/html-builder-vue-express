@@ -28,37 +28,44 @@ class WordToHtml {
 
 	async runProcess() {
 		console.log("🟡 Running process:", this.name);
-		const publication = this.publication;
-		const wordFileName = publication.wordFileName;
+		try {
+			const publication = this.publication;
+			const wordFileName = publication.wordFileName;
 
-		// unzip the input word doc
-		const wordFilePath = `${publication.folder}/input/source.docx`;
-		const inputWordDoc = new WordDocument(wordFilePath);
-		const unzippedWordFolder = await inputWordDoc.unzip();
+			// unzip the input word doc
+			const wordFilePath = `${publication.folder}/input/source.docx`;
+			const inputWordDoc = new WordDocument(wordFilePath);
+			const unzippedWordFolder = await inputWordDoc.unzip();
 
-		// create the styleMap
-		const styleMap = await inputWordDoc.getStyleMap(unzippedWordFolder);
+			// create the styleMap
+			const styleMap = await inputWordDoc.getStyleMap(unzippedWordFolder);
 
-		const outputFolderPath = `${publication.folder}/output`;
+			const outputFolderPath = `${publication.folder}/output`;
 
-		// convert word doc to html files
-		await this.convertWordToHtml({
-			wordFilePath,
-			outputFolderPath,
-			wordFileName,
-			styleMap,
-			unzippedWordFolder
-		});
+			// convert word doc to html files
+			await this.convertWordToHtml({
+				wordFilePath,
+				outputFolderPath,
+				wordFileName,
+				styleMap,
+				unzippedWordFolder
+			});
 
-		const css = await inputWordDoc.getCssCode(unzippedWordFolder);
+			const css = await inputWordDoc.getCssCode(unzippedWordFolder);
 
-		// create style.css file
-		await writeFile(`${outputFolderPath}/style.css`, css);
+			// create style.css file
+			await writeFile(`${outputFolderPath}/style.css`, css);
 
-		// // copy stylesheet from theme folder
-		// await this.theme.copyStylesheet(outputFolderPath);
+			// // copy stylesheet from theme folder
+			// await this.theme.copyStylesheet(outputFolderPath);
 
-		console.log("🟣 Run process: Word to HTML successful!");
+			console.log("🟣 Run process: Word to HTML successful!");
+
+			return true;
+		} catch (error) {
+            console.error("🔴 Error running process:", error);
+			return false;
+		}
 	}
 
 	async convertWordToHtml({ wordFilePath, outputFolderPath, wordFileName, styleMap, unzippedWordFolder }) {

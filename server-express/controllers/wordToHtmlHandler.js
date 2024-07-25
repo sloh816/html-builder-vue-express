@@ -3,7 +3,6 @@ const multer = require("multer");
 const fsp = require("fs").promises;
 const WordToHtml = require("../models/wordToHtml");
 const Publication = require("../models/publication");
-const Theme = require("../models/theme");
 const { restartServer } = require("../utils/pm2");
 
 const upload = multer({
@@ -28,24 +27,18 @@ class WordToHtmlHandler {
 		const tempWordFilePath = req.file.path + ".docx";
 		const wordFile = req.file.originalname;
 
+        // create the publication folder
 		const publication = new Publication();
 		await publication.createPublicationFolder(tempWordFilePath, wordFile);
 
+        // run the process on the publication
 		const process = new WordToHtml(publication);
-		await process.runProcess();
-		restartServer();
+		const success = await process.runProcess();
 
-		// instantiate Theme object
-		// const theme = new Theme(req.body.themeId);
+        // send the response
+        res.send({success});
 
-		// instantiate WordToHtml object
-		// const tempWordFilePath = req.file.path + ".docx";
-		// const wordFile = req.file.originalname;
-		// const wordToHtml = new WordToHtml(tempWordFilePath, wordFile, theme);
-		// wordToHtml.print();
-
-		// run the process
-		// wordToHtml.runProcess();
+        // // restart the server to serve the new files
 		// restartServer();
 	}
 }
